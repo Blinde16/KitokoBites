@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Bakery</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="#"><img src="/Kitoko Bites Logo.jpg" alt="Logo" class="logo-img"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#login">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section with Bakery Image -->
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Welcome to Our Bakery</h1>
+            <p>Freshly baked treats, every day. Savor the best of the bakery world!</p>
+            <a href="#menu" class="cta-btn">Explore Our Menu</a>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="section">
+        <h2>About Us</h2>
+        <p>At Our Bakery, we specialize in freshly baked goods made with love and the finest ingredients. Whether you're looking for pastries, cakes, or bread, we've got something for everyone!</p>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="section">
+        <h2>Our Menu</h2>
+        <p>From sweet treats to savory delights, check out some of our best-selling items:</p>
+        <div class="menu-items">
+            <div class="menu-item">
+                <img src="/Kitoko Bites_Powder.jpg" alt="Powdered Kitoko Bites">
+                <h3>Let it Snow</h3>
+                <p>What would a donut be without the perfect dusting of powdered sugar? While our donuts are already packed with sweetness, we believe that a delicate sprinkle of "snow" elevates them to a whole new level of indulgence. This classic touch adds just the right amount of sweetness and a subtle, melt-in-your-mouth texture that customers can’t get enough of. And the best part? Our toppings, including this magical dusting, come at no extra cost—because everyone deserves that little extra something. Whether it’s a cozy winter morning or a sunny summer afternoon, we love seeing the powdered sugar fly, brightening up your donut experience with every order. Light, airy, and timeless, our powdered sugar is the perfect finishing touch—no matter the season, it makes everything just a little bit sweeter.</p>
+            </div>
+            <div class="menu-item">
+                <img src="/nuttynuty.jpg" alt="nuttynuty" class="section-img">
+                <h3>Why Everything Is Better In Combos</h3>
+                <p>At Kitoko Bites, we believe everything is better in combos. That’s why we’ve made it our mission to offer the best value possible by including all the toppings in our combos at no extra charge. We want to empower our customers to get creative and customize their perfect treat without worrying about hidden fees or extra costs for the little things that make a big difference. Whether it’s a generous swirl of frosting, a sprinkle of nuts, or a light dusting of powdered sugar, we believe that these thoughtful additions elevate your experience, and we’re passionate about offering that freedom with every order. Unlike other bakeries where toppings might come with an upcharge, we want you to feel like you’re getting the best bang for your buck—every time you visit. With us, it’s all about value, choice, and giving you the opportunity to curate your own delicious masterpiece, knowing you’re getting the highest quality without compromise.</p>
+            </div>
+            <div class="menu-item">
+                <img src="/Screenshot_20241114_161659_Drive.jpg" alt="Kitoko Bites Secret">
+                <h3>Our Secret Sauce</h3>
+                <p>This sauce is for your taste buds only! Can you keep a secret because often it’s difficult for us to refrain from sharing our secret sauce with our curious customers who want to dip, sprinkle, and even drink this liquid gold. There have been several different guesses over the years but we can confirm that our in-house secret sauce is not honey or agave. It is one of a kind and we would love for you to join in on the conversation about how this sauce coupled with our donuts is a formula for elated joy and pure satisfaction! </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Us Section -->
+    <section id="contact" class="section">
+        <h2>Contact Us</h2>
+        <p>Have questions or special requests? Reach out to us!</p>
+        <form action="/contact" method="POST">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <!-- Login Section -->
+    <section id="login" class="section">
+        <h2>Login</h2>
+        <p>Already a customer? Log in to place an order</p>
+        <form action="/project" method="GET">
+            <button type="submit">Login</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Our Bakery. All Rights Reserved.</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>

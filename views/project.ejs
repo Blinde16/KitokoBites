@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Login - Bakery Business</title>
+    <link rel="stylesheet" href="project.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Welcome to Our Bakery</h1>
+        <p>Please login to place your order</p>
+        
+        <!-- Login Form -->
+        <form action="/login" method="POST">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="input-group">
+                <button type="submit" class="login-btn">Login</button>
+            </div>
+        </form>
+        
+        <div class="footer">
+            <p>Don't have an account? Sign up here</p>
+            <form action="/signup" method="GET">
+                <button type="submit" class="login-btn"> Signup page</button>
+            </form>
+            <form action="/" method="get">
+                <button type="submit" class="login-btn">Back to Homepage</button>
+            </form>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
