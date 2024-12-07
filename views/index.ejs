@@ -7,34 +7,16 @@
     <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <header>
-        <nav>
-            <div class="logo">
-                <a href="#"><img src="/Kitoko Bites Logo.jpg" alt="Logo" class="logo-img"></a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#menu">Menu</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="#login">Login</a></li>
-            </ul>
-        </nav>
-    </header>
-
+    <!-- Navbar + Header -->
+    <%- include('header') %> <!-- This will include your header.ejs -->
+        
     <!-- Hero Section with Bakery Image -->
     <section class="hero">
         <div class="hero-text">
             <h1>Welcome to Our Bakery</h1>
             <p>Freshly baked treats, every day. Savor the best of the bakery world!</p>
-            <a href="#menu" class="cta-btn">Explore Our Menu</a>
+            <a href="/menu" class="cta-btn">Explore Our Menu</a>
         </div>
-    </section>
-
-    <!-- About Us Section -->
-    <section id="about" class="section">
-        <h2>About Us</h2>
-        <p>At Our Bakery, we specialize in freshly baked goods made with love and the finest ingredients. Whether you're looking for pastries, cakes, or bread, we've got something for everyone!</p>
     </section>
 
     <!-- Menu Section -->
@@ -59,6 +41,19 @@
             </div>
         </div>
     </section>
+    
+    <!-- Hear What others have said-->
+    <section id="reviews" class="section">
+        <h2>Reviews</h2>
+        <p>Hear what others have said about Kitoko Bites:</p>
+        <div class="menu-items">
+            <div class="menu-item">
+                <img src="/Kitoko Bites_Powder.jpg" alt="Powdered Kitoko Bites">
+                <h3>Jason</h3>
+                <p>The moment I tasted my mom's cooking I knew that I wouldn't be able to stop eating it.</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Contact Us Section -->
     <section id="contact" class="section">
@@ -75,19 +70,15 @@
         </form>
     </section>
 
-    <!-- Login Section -->
-    <section id="login" class="section">
-        <h2>Login</h2>
-        <p>Already a customer? Log in to place an order</p>
-        <form action="/project" method="GET">
-            <button type="submit">Login</button>
-        </form>
+    <!-- About Us Section -->
+    <section id="aboutLanding" class="section">
+        <h2>About Us</h2>
+        <p>At Our Bakery, we specialize in freshly baked goods made with love and the finest ingredients. Whether you're looking for pastries, cakes, or bread, we've got something for everyone!</p>
     </section>
-
+    
     <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 Our Bakery. All Rights Reserved.</p>
-    </footer>
+    <%- include('footer') %> <!-- This will include your header.ejs -->
+      
 
     <script src="scripts.js"></script>
 </body>

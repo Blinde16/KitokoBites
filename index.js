@@ -40,7 +40,7 @@ app.post("/login", (req,res) => {
     
 })
 
-app.get("/project", (req,res) => {
+app.get("/login", (req,res) => {
     res.render("project")
 })
 app.get("/signup", (req,res) =>{
