@@ -62,12 +62,12 @@ app.get('/menu', async (req, res) => {
         knex('products')
         .join('producttype', 'producttype', '=', 'producttypeid')
         .select('products.productname', 'producttype.producttypename', 'products.productprice', 'products.productcost');
-  
+        
       // Fetch toppings from the database
       const toppings = await 
       knex('toppings')
-      .join('toppingtype', 'toppingtypeid', '=', 'toppingtypeid')
-      .select('toppingname', 'toppingtype', 'productid');
+      .join('toppingtypes', 'toppings.toppingtypeid', '=', 'toppingtypes.toppingtypeid')
+      .select('toppingname', 'toppings.toppingtypeid', 'toppingtypename', 'productid');
   
       // Render the EJS template with the products and toppings data
       res.render('menu', {
