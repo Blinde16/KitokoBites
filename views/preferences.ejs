@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preferences - Kitoko Bites</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .table-container {
+      margin-bottom: 30px;
+    }
+    .action-buttons button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center my-4">Preferences Management</h1>
+
+    <!-- Products Table -->
+    <div class="table-container">
+      <h2>Products</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Product Type</th>
+            <th>Price</th>
+            <th>Cost</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="products-table-body">
+          <% products.forEach(product => { %>
+          <tr>
+            <td><%= product.productid %></td>
+            <td><%= product.productname %></td>
+            <td><%= product.producttype %></td>
+            <td><%= product.productprice %></td>
+            <td><%= product.productcost %></td>
+            <td class="action-buttons">
+              <button class="btn btn-warning btn-sm edit-btn">Edit</button>
+              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <button class="btn btn-success" id="add-product-btn">Add Product</button>
+    </div>
+
+    <!-- Product Types Table -->
+    <div class="table-container">
+      <h2>Product Types</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Type ID</th>
+            <th>Type Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="product-types-table-body">
+          <% productTypes.forEach(type => { %>
+          <tr>
+            <td><%= type.producttypeid %></td>
+            <td><%= type.producttypename %></td>
+            <td class="action-buttons">
+              <button class="btn btn-warning btn-sm edit-btn">Edit</button>
+              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <button class="btn btn-success" id="add-product-type-btn">Add Product Type</button>
+    </div>
+
+    <!-- Combos Table -->
+    <div class="table-container">
+      <h2>Combos</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Combo ID</th>
+            <th>Product Name</th>
+            <th>Combo Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="combos-table-body">
+          <% combos.forEach(combo => { %>
+          <tr>
+            <td><%= combo.comboid %></td>
+            <td><%= combo.productname %></td>
+            <td><%= combo.comboname %></td>
+            <td><%= combo.combodescription %></td>
+            <td class="action-buttons">
+              <button class="btn btn-warning btn-sm edit-btn">Edit</button>
+              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <button class="btn btn-success" id="add-combo-btn">Add Combo</button>
+    </div>
+
+    <!-- Toppings Table -->
+    <div class="table-container">
+      <h2>Toppings</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Topping ID</th>
+            <th>Topping Name</th>
+            <th>Topping Type</th>
+            <th>Product ID</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="toppings-table-body">
+          <% toppings.forEach(topping => { %>
+          <tr>
+            <td><%= topping.toppingid %></td>
+            <td><%= topping.toppingname %></td>
+            <td><%= topping.toppingtypename %></td>
+            <td><%= topping.productid %></td>
+            <td class="action-buttons">
+              <button class="btn btn-warning btn-sm edit-btn">Edit</button>
+              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <button class="btn btn-success" id="add-topping-btn">Add Topping</button>
+    </div>
+
+    <!-- Topping Types Table -->
+    <div class="table-container">
+      <h2>Topping Types</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Topping Type ID</th>
+            <th>Topping Type Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="topping-types-table-body">
+          <% toppingTypes.forEach(type => { %>
+          <tr>
+            <td><%= type.toppingtypeid %></td>
+            <td><%= type.toppingtypename %></td>
+            <td class="action-buttons">
+              <button class="btn btn-warning btn-sm edit-btn">Edit</button>
+              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <button class="btn btn-success" id="add-topping-type-btn">Add Topping Type</button>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

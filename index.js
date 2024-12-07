@@ -41,7 +41,7 @@ app.post("/login", (req,res) => {
 })
 
 app.get("/login", (req,res) => {
-    res.render("project")
+    res.render("login")
 })
 app.get("/signup", (req,res) =>{
     res.render("signup")
@@ -129,5 +129,44 @@ app.get('/ordernow', async (req, res) => {
       res.status(500).send('Error fetching data from the database');
     }
 });
-app.l  
+
+app.get('/preferences', async (req, res) => {
+    try {
+      // Fetch products from the database
+      const products = await knex('products')
+        .select('productid', 'productname', 'productprice', 'productcost', 'producttype');
+  
+      // Fetch product types from the database
+      const productTypes = await knex('producttype')
+        .select('producttypename', 'producttypeid');
+  
+      // Fetch combos from the database
+      const combos = await knex('combos')
+        .join('products', 'combos.productid', '=', 'products.productid')
+        .select('comboid', 'comboname', 'combodescription', 'products.productname');
+  
+      // Fetch toppings from the database
+      const toppings = await knex('toppings')
+        .join('toppingtypes', 'toppings.toppingtypeid', '=', 'toppingtypes.toppingtypeid')
+        .select('toppingid', 'toppingname', 'toppings.productid', 'toppingtypes.toppingtypename');
+  
+      // Fetch topping types from the database
+      const toppingTypes = await knex('toppingtypes')
+        .select('toppingtypename', 'toppingtypeid');
+  
+      // Render the preferences page with all fetched data
+      res.render('preferences', {
+        products: products,
+        productTypes: productTypes,
+        combos: combos,
+        toppings: toppings,
+        toppingTypes: toppingTypes
+      });
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
+  });
+  
+
 app.listen(port, console.log('Server listening'))

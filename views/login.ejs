@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Login - Bakery Business</title>
-    <link rel="stylesheet" href="login.css">
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
         <!-- Navbar + Header -->
@@ -39,8 +40,14 @@
             <form action="/" method="get">
                 <button type="submit" class="login-btn">Back to Homepage</button>
             </form>
+            <form action="/preferences" method="get">
+                <button type="submit" class="login-btn">Admin preferences</button>
+            </form>
             </form>
         </div>
     </div>
+    <!-- Footer -->
+    <%- include('footer') %> <!-- This will include your header.ejs -->
+     
 </body>
 </html>
