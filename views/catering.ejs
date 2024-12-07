@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catering - Kitoko Bites</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .hero {
+      text-align: center;
+      padding: 30px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #555;
+    }
+    .events-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .event-card {
+      width: 18rem;
+      margin-bottom: 20px;
+    }
+    .btn-blue {
+      background-color: rgb(37, 107, 178);
+      color: white;
+    }
+    .btn-blue:hover {
+      background-color: rgb(11, 81, 151);
+    }
+  </style>
+</head>
+<body>
+    <!-- Navbar + Header -->
+    <%- include('header') %> <!-- This will include your header.ejs -->
+        
+  <div class="container">
+    <!-- Hero Section -->
+    <div class="hero">
+      <h1>Catering</h1>
+      <p>At Kitoko Bites, we pride ourselves on delivering joy and sweetness to your special events. With exceptional service and irresistible treats, we ensure unforgettable experiences for our customers.</p>
+    </div>
+
+    <!-- Events Section -->
+    <h2 class="mb-4 text-center">Events We Cater To</h2>
+    <div class="events-list">
+      <!-- Birthdays Card -->
+      <div class="card event-card">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Birthdays">
+        <div class="card-body">
+          <h5 class="card-title">Birthdays</h5>
+          <p class="card-text">Make every birthday sweeter with our customized donut platters. Perfect for all ages!</p>
+        </div>
+      </div>
+
+      <!-- Church Gatherings Card -->
+      <div class="card event-card">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Church Gatherings">
+        <div class="card-body">
+          <h5 class="card-title">Church Gatherings</h5>
+          <p class="card-text">Perfect for fellowship and community events. Sweeten your worship with our donut treats.</p>
+        </div>
+      </div>
+
+      <!-- Corporate Card -->
+      <div class="card event-card">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Corporate">
+        <div class="card-body">
+          <h5 class="card-title">Corporate</h5>
+          <p class="card-text">Impress your team with delicious treats at your next meeting or celebration.</p>
+        </div>
+      </div>
+
+      <!-- Graduations Card -->
+      <div class="card event-card">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Graduations">
+        <div class="card-body">
+          <h5 class="card-title">Graduations</h5>
+          <p class="card-text">Celebrate milestones with donuts that everyone loves. Perfect for grads of all ages!</p>
+        </div>
+      </div>
+
+      <!-- School Card -->
+      <div class="card event-card">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="School">
+        <div class="card-body">
+          <h5 class="card-title">School</h5>
+          <p class="card-text">From fundraisers to student celebrations, we’ve got you covered with sweet treats for the kids.</p>
+        </div>
+      </div>
+
+      <!-- Weddings Card -->
+      <div class="card event-card">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Weddings">
+        <div class="card-body">
+          <h5 class="card-title">Weddings</h5>
+          <p class="card-text">Add a sweet touch to your special day with our catering packages. Perfect for your wedding reception.</p>
+        </div>
+      </div>
+
+      <!-- Rehearsals Card -->
+      <div class="card event-card">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Rehearsals">
+        <div class="card-body">
+          <h5 class="card-title">Rehearsals</h5>
+          <p class="card-text">Delight your guests with treats before the big day. Our donuts are perfect for rehearsal dinners.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <h2 class="mb-4 mt-5 text-center">Book Your Event</h2>
+    <form action="/catering/book" method="POST" class="contact-form">
+      <div class="mb-3">
+        <label for="name" class="form-label">Your Name</label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="Enter your name" required>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
+      </div>
+      <div class="mb-3">
+        <label for="phone" class="form-label">Phone Number</label>
+        <input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter your phone number" required>
+      </div>
+      <div class="mb-3">
+        <label for="eventDate" class="form-label">Event Date</label>
+        <input type="date" id="eventDate" name="eventDate" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="package" class="form-label">Select Package</label>
+        <select id="package" name="package" class="form-control" required>
+          <option value="">Choose a package...</option>
+          <option value="basic">Basic Package</option>
+          <option value="deluxe">Deluxe Package</option>
+          <option value="custom">Custom Package</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="message" class="form-label">Additional Notes</label>
+        <textarea id="message" name="message" class="form-control" rows="3" placeholder="Any special requests?"></textarea>
+      </div>
+      <button type="submit" class="btn btn-blue w-100">Submit Booking</button>
+    </form>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

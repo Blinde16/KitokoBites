@@ -79,4 +79,55 @@ app.get('/menu', async (req, res) => {
       res.status(500).send('Error fetching data from the database');
     }
   });
+
+app.get('/catering', async (req, res) => {
+    try {
+      // Fetch products from the database
+      const products = await 
+        knex('products')
+        .join('producttype', 'producttype', '=', 'producttypeid')
+        .select('products.productname', 'producttype.producttypename', 'products.productprice', 'products.productcost');
+        
+      // Fetch toppings from the database
+      const toppings = await 
+      knex('toppings')
+      .join('toppingtypes', 'toppings.toppingtypeid', '=', 'toppingtypes.toppingtypeid')
+      .select('toppingname', 'toppings.toppingtypeid', 'toppingtypename', 'productid');
+  
+      // Render the EJS template with the products and toppings data
+      res.render('catering', {
+        products: products,
+        toppings: toppings,
+      });
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
+});
+
+app.get('/ordernow', async (req, res) => {
+    try {
+      // Fetch products from the database
+      const products = await 
+        knex('products')
+        .join('producttype', 'producttype', '=', 'producttypeid')
+        .select('products.productname', 'producttype.producttypename', 'products.productprice', 'products.productcost');
+        
+      // Fetch toppings from the database
+      const toppings = await 
+      knex('toppings')
+      .join('toppingtypes', 'toppings.toppingtypeid', '=', 'toppingtypes.toppingtypeid')
+      .select('toppingname', 'toppings.toppingtypeid', 'toppingtypename', 'productid');
+  
+      // Render the EJS template with the products and toppings data
+      res.render('ordernow', {
+        products: products,
+        toppings: toppings,
+      });
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
+});
+app.l  
 app.listen(port, console.log('Server listening'))
