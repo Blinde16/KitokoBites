@@ -24,8 +24,8 @@ const knex = require("knex") ({
     connection : {
         host : "localhost",
         user : "postgres",
-        password : "admin",
-        database : "mycompany",
+        password : "9174",
+        database : "kitokobites",
         port : 5432
     }
 })
