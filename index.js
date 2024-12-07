@@ -54,4 +54,29 @@ app.post('/storeLogin', (req, res) => {
     res.render(`createdAccount`, {user: username});
   });
 
+  // Define the route that renders the menu page
+app.get('/menu', async (req, res) => {
+    try {
+      // Fetch products from the database
+      const products = await 
+        knex('products')
+        .join('producttype', 'producttype', '=', 'producttypeid')
+        .select('products.productname', 'producttype.producttypename', 'products.productprice', 'products.productcost');
+  
+      // Fetch toppings from the database
+      const toppings = await 
+      knex('toppings')
+      .join('toppingtype', 'toppingtypeid', '=', 'toppingtypeid')
+      .select('toppingname', 'toppingtype', 'productid');
+  
+      // Render the EJS template with the products and toppings data
+      res.render('menu', {
+        products: products,
+        toppings: toppings,
+      });
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
+  });
 app.listen(port, console.log('Server listening'))

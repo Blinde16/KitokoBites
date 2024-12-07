@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu - Products & Toppings</title>
+  <!-- Bootstrap CSS for styling -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .product-card {
+      margin: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .product-card img {
+      max-width: 100%;
+      height: auto;
+    }
+    .topping-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .topping-list .topping {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+    }
+    .topping-list .topping:hover {
+      background-color: #e9ecef;
+    }
+    .container {
+      padding-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-5">Our Products & Toppings</h1>
+
+    <!-- Products Section -->
+    <h2 class="mb-4">Products</h2>
+    <div class="row">
+      <% products.forEach(product => { %>
+        <div class="col-md-4">
+          <div class="card product-card">
+            <img src="https://via.placeholder.com/300x200" alt="<%= product.ProductName %>">
+            <div class="card-body">
+              <h5 class="card-title"><%= product.productname %></h5>
+              <p class="card-text">Type: <%= product.producttypename %></p>
+              <p class="card-text">Price: $<%= product.productprice%></p>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Toppings Section -->
+    <h2 class="mb-4 mt-5">Sprinkle Toppings</h2>
+    <div class="topping-list">
+      <% toppings.filter(topping => topping.productid === null).forEach(topping => { %>
+        <div class="topping">
+          <%= topping.toppingName %>
+        </div>
+      <% }) %>
+    </div>
+
+    <h2 class="mb-4 mt-5">Drizzle Toppings</h2>
+    <div class="topping-list">
+      <% toppings.filter(topping => topping.productid !== null).forEach(topping => { %>
+        <div class="topping">
+          <%= topping.toppingName %>
+        </div>
+      <% }) %>
+    </div>
+
+  </div>
+
+  <!-- Bootstrap JS for interactivity -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

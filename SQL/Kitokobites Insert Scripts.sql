@@ -43,27 +43,32 @@ VALUES
     ('Yellow Snow', 1, 5.99, 2.50),
     ('Yin Yang', 2, 6.99, 3.00);
 -- Sprinkle toppings
-INSERT INTO Toppings (ToppingName, ProductID)
+INSERT INTO Toppings (ToppingName, ProductID, ToppingTypeID)
 VALUES
-    ('Almond Crumbs', NULL),
-    ('Cashew Crumbs', NULL),
-    ('Coconut Flakes', NULL),
-    ('Macademia Crumbs', NULL),
-    ('Peanut Crumbs', NULL),
-    ('Pecans Crumbs', NULL),
-    ('Pistachios Crumbs', NULL),
-    ('Sparkle', NULL),
-    ('Walnut Crumbs', NULL);
+    ('Almond Crumbs', NULL, 2),
+    ('Cashew Crumbs', NULL, 2),
+    ('Coconut Flakes', NULL, 2),
+    ('Macademia Crumbs', NULL, 2),
+    ('Peanut Crumbs', NULL, 2),
+    ('Pecans Crumbs', NULL, 2),
+    ('Pistachios Crumbs', NULL, 2),
+    ('Sparkle', NULL, 2),
+    ('Walnut Crumbs', NULL, 2);
 -- drizzle toppings
-INSERT INTO Toppings (ToppingName, ProductID)
+INSERT INTO Toppings (ToppingName, ProductID, ToppingTypeID)
 VALUES
-    ('Secret Sauce', NULL),
-    ('Chocolate (white)', NULL),
-    ('Honey', NULL),
-    ('Glaze', NULL),
-    ('Peanut Butter', NULL),
-    ('Almond Butter', NULL),
-    ('Apple Butter', NULL);
+    ('Secret Sauce', NULL, 1),
+    ('Chocolate (white)', NULL, 1),
+    ('Honey', NULL, 1),
+    ('Glaze', NULL, 1),
+    ('Peanut Butter', NULL, 1),
+    ('Almond Butter', NULL, 1),
+    ('Apple Butter', NULL, 1);
+
+INSERT INTO ToppingTypes (ToppingTypeName)
+VALUES
+    ('Drizzle'),
+    ('Sprinkle');
 -- Customers
 INSERT INTO Customers (CustFirstName, CustLastName, CustEmail, CustUsername, CustPassword)
 VALUES
