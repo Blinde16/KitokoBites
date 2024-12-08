@@ -38,6 +38,9 @@ app.get("/", (req,res) => {
     res.render("index")
 })
 
+app.get("/aboutus", (req,res) => {
+    res.render("aboutus")
+})
 app.post("/login", (req,res) => {
     const { username, password } = req.body;
     
@@ -46,6 +49,7 @@ app.post("/login", (req,res) => {
 app.get("/login", (req,res) => {
     res.render("login")
 })
+
 app.get("/signup", (req,res) =>{
     res.render("signup")
 })
@@ -170,6 +174,20 @@ app.get('/preferences', async (req, res) => {
       res.status(500).send('Error fetching data from the database');
     }
   });
-  
 
+  app.get("/addproduct", (req,res) =>{
+    res.render("addproduct")
+})
+
+app.get("/editproduct", (req,res) =>{
+    res.render("editproduct")
+})
+
+app.post("/addproduct", (req,res) =>{
+    res.render("addproduct")
+})
+
+app.post("/editproduct", (req,res) =>{
+    res.render("editproduct")
+})
 app.listen(port, console.log('Server listening'))
