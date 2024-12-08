@@ -18,6 +18,9 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(express.static('public'));
 
+//  Static middleware 
+app.use(express.static(path.join(__dirname, 'public')));
+
 //connects us to our server in postgres
 const knex = require("knex") ({
     client : "pg",
