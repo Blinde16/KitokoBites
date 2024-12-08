@@ -46,10 +46,10 @@
             <td><%= product.productprice %></td>
             <td><%= product.productcost %></td>
             <td class="action-buttons">
-                <form action="/editproduct/<%= type.producttypeid %>" method="GET" style="display:inline;">
+                <form action="/editproduct/<%= product.productid %>" method="GET" style="display:inline;">
                     <button type="submit" class="btn btn-warning btn-sm edit-btn">Edit</button>
                 </form>
-                <form action="/deleteproduct/<%= type.producttypeid %>" method="POST" style="display:inline;">
+                <form action="/deleteproduct/<%= product.productid %>" method="POST" style="display:inline;">
                     <button type="submit" class="btn btn-danger btn-sm delete-btn" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
                 </form>
             </td>
@@ -57,7 +57,9 @@
           <% }); %>
         </tbody>
       </table>
-      <button class="btn btn-success" id="add-product-btn">Add Product</button>
+      <form action="/addproduct" method="GET" style="display:inline;">
+        <button type="submit" class="btn btn-success" id="add-product-btn">Add Product</button>
+        </form>
     </div>
 
     <!-- Product Types Table -->
@@ -89,8 +91,10 @@
           <% }); %>
         </tbody>
       </table>
-      <button class="btn btn-success" id="add-product-type-btn">Add Product Type</button>
-    </div>
+      <form action="/addproducttype" method="GET" style="display:inline;">
+        <button type="submit" class="btn btn-success" id="add-product-type-btn">Add Product Type</button>
+    </form>
+      </div>
 
     <!-- Combos Table -->
     <div class="table-container">
@@ -125,7 +129,9 @@
           <% }); %>
         </tbody>
       </table>
-      <button class="btn btn-success" id="add-combo-btn">Add Combo</button>
+      <form action="/addcombo" method="GET" style="display:inline;">
+        <button type="submit" class="btn btn-success" id="add-combo-btn">Add Combo</button>
+      </form>
     </div>
 
     <!-- Toppings Table -->
@@ -161,7 +167,9 @@
           <% }); %>
         </tbody>
       </table>
-      <button class="btn btn-success" id="add-topping-btn">Add Topping</button>
+      <form action="/addtopping" method="GET" style="display:inline;">
+        <button type="submit" class="btn btn-success" id="add-topping-btn">Add Topping</button>
+      </form>
     </div>
 
     <!-- Topping Types Table -->
@@ -193,7 +201,9 @@
           <% }); %>
         </tbody>
       </table>
-      <button class="btn btn-success" id="add-topping-type-btn">Add Topping Type</button>
+      <form action="/addtoppingtype" method="GET" style="display:inline;">
+        <button type="submit" class="btn btn-success" id="add-topping-type-btn">Add Topping Type</button>
+      </form>
     </div>
   </div>
 
