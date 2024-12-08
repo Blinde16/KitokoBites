@@ -260,12 +260,40 @@ app.post("/editproduct", (req,res) =>{
     res.render("editproduct")
 })
 
-app.get("/addproducttype", (req,res) =>{
-    res.render("addproducttype")
+app.get("/addproducttype",  async (req,res) =>{
+    try { 
+    const producttype = await knex('producttype')
+    .select(
+        'producttypeid', 
+        'producttypename'
+    );
+
+    res.render("addproducttype", {
+        producttype: producttype
+        })
+
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
 })
 
-app.get("/editproducttype", (req,res) =>{
-    res.render("editproducttype")
+app.get("/editproducttype/:producttypeid",  async (req,res) =>{
+    try { 
+    const producttype = await knex('producttype')
+    .select(
+        'producttypeid', 
+        'producttypename'
+    );
+
+    res.render("addproducttype", {
+        producttype: producttype
+        })
+
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
 })
 
 app.post("/addproducttype", (req,res) =>{
