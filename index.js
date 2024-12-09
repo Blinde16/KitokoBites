@@ -267,13 +267,98 @@ app.get("/editproduct/:productid", async (req, res) => {
     }
   });
 
-  app.delete("/deleteproduct/:productid", async (req, res) => {
+  app.post("/deleteproduct/:productid", async (req, res) => {
     const { productid } = req.params;
   
     try {
       // Delete the product from the database
       await knex('products')
         .where('productid', productid)
+        .del();
+  
+        res.redirect("/preferences"); // Redirect to preferences after successful update
+    } catch (error) {
+      console.error("Error updating product:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.get("/addproducttype", async (req, res) => {
+    try {
+      res.render("addproducttype"); // Render the form directly
+    } catch (err) {
+      console.error("Error rendering addproducttype form:", err);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.get("/editproducttype/:producttypeid", async (req, res) => {
+    const { producttypeid } = req.params;
+    try {
+      const producttype = await knex('producttype')
+        .where('producttypeid', producttypeid)
+        .select('producttypeid', 'producttypename')
+        .first(); // Fetch a single record
+  
+      if (!producttype) {
+        return res.status(404).send("Product type not found");
+      }
+  
+      res.render("editproducttype", { producttype });
+    } catch (err) {
+      console.error("Error fetching product type:", err);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.post("/addproducttype", async (req, res) => {
+    const { producttypename } = req.body;
+  
+    try {
+      await knex("producttype").insert({
+        producttypename,
+      });
+  
+      res.redirect("/preferences"); // Redirect after successful insert
+    } catch (error) {
+      console.error("Error adding product type:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.post("/editproducttype/:producttypeid", async (req, res) => {
+    const { producttypeid } = req.params; // Get from params
+    const { producttypename } = req.body;
+  
+    try {
+      const updatedRows = await knex('producttype')
+        .where('producttypeid', producttypeid)
+        .update({
+          producttypename,
+        });
+  
+      if (updatedRows === 0) {
+        return res.status(404).send("Product type not found or not updated");
+      }
+  
+      res.redirect("/preferences"); // Redirect after successful update
+    } catch (error) {
+      console.error("Error updating product type:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+  app.post("/deleteproducttype/:producttypeid", async (req, res) => {
+    const { producttypeid } = req.params;
+  
+    try {
+      // Delete the product from the database
+      await knex('producttype')
+        .where('producttypeid', producttypeid)
         .del();
   
       res.status(200).json({ message: "Product deleted successfully" });
@@ -284,184 +369,100 @@ app.get("/editproduct/:productid", async (req, res) => {
   });
   
 
-app.get("/addproducttype",  async (req,res) =>{
-    try { 
-    const producttype = await knex('producttype')
-    .select(
-        'producttypeid', 
-        'producttypename'
-    );
-
-    res.render("addproducttype", {
-        producttype: producttype
-        })
-
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
+// Render Add Combo Form
+app.get("/addcombo", async (req, res) => {
+    try {
+      // Fetch product list (or other required data for the form, if needed)
+      const products = await knex('products').select('productid', 'productname');
+      res.render("addcombo", { products }); // Render the form with products for selection
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      res.status(500).send("Error rendering add combo form");
     }
-})
-
-app.get("/editproducttype/:producttypeid",  async (req,res) =>{
-    try { 
-    const producttype = await knex('producttype')
-    .select(
-        'producttypeid', 
-        'producttypename'
-    );
-
-    res.render("/editproducttype", {
-        producttype: producttype
-        })
-
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
-    }
-})
-
-app.post("/addproducttype", (req,res) =>{
-
-    const { 
-        producttypename, 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("producttypename")
-    .insert({
-      producttypename: producttypename
-    })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.post("/editproducttype/:producttypeid", (req,res) =>{
-    const { 
-        producttypeid,
-        producttypename
-      } = req.body;
-      console.log('Form submitted');
-  
-  // Update the Volunteer in the database
-  knex('producttype')
-    .where('producttypeid', producttypeid)
-    .update({
-      producttypename: producttypename
-    })
-  .then(() => {
-    // Redirect after both updates succeed
-    res.redirect("/preferences");
-  })
-  .catch(error => {
-    console.error('Error updating volunteer or address:', error);
-    res.status(500).send('Internal Server Error');
   });
-})
-
-app.get("/addcombo", (req,res) =>{
-
-    const { 
-        productid,
-        comboname,
-        combodescription 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("combos")
-    .insert({
-        productid: productid,
-        comboname: comboname,
-        combodescription: combodescription
-    })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.get("/editcombo/:comboid",  async (req,res) =>{
-    try { 
-    const combo = await 
-    knex('combos')
-    .select(
-        'comboid', 
-        'productid',
-        'comboname',
-        'combodescription'
-    );
-
-    res.render("/editproducttype", {
-        combo: combo
-        })
-
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
-    }
-})
-
-app.post("/addcombo", (req,res) =>{
-
-    const { 
-        productid,
-        comboname,
-        combodescription 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("combos")
-    .insert({
-        productid: productid,
-        comboname: comboname,
-        combodescription: combodescription
-    })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.post("/editcombo/:comboid", (req,res) =>{
-    const { 
-        comboid,
-        productid,
-        comboname,
-        combodescription
-      } = req.body;
-      console.log('Form submitted');
   
-  // Update the Volunteer in the database
-  knex('combos')
-    .where('comboid', comboid)
-    .update({
+  // Add Combo - Form Submission
+  app.post("/addcombo", async (req, res) => {
+    const { productid, comboname, combodescription } = req.body;
+  
+    try {
+      await knex("combos").insert({
         productid: productid,
         comboname: comboname,
-        combodescription: combodescription
-    })
-  .then(() => {
-    // Redirect after both updates succeed
-    res.redirect("/preferences");
-  })
-  .catch(error => {
-    console.error('Error updating volunteer or address:', error);
-    res.status(500).send('Internal Server Error');
+        combodescription: combodescription,
+      });
+      res.redirect("/preferences"); // Redirect after successful addition
+    } catch (error) {
+      console.error("Error adding combo:", error);
+      res.status(500).send("Internal Server Error");
+    }
   });
-})
 
+// Render Edit Combo Form
+app.get("/editcombo/:comboid", async (req, res) => {
+  const { comboid } = req.params;
+
+  try {
+    // Fetch the specific combo to edit
+    const combo = await knex('combos')
+      .where('comboid', comboid)
+      .first();
+
+    // Fetch the product list for dropdown selection
+    const products = await knex('products').select('productid', 'productname');
+
+    if (!combo) {
+      return res.status(404).send("Combo not found");
+    }
+
+    res.render("editcombo", { combo, products });
+  } catch (error) {
+    console.error("Error fetching combo:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Edit Combo - Form Submission
+app.post("/editcombo/:comboid", async (req, res) => {
+  const { comboid } = req.params;
+  const { productid, comboname, combodescription } = req.body;
+
+  try {
+    await knex('combos')
+      .where('comboid', comboid)
+      .update({
+        productid: productid,
+        comboname: comboname,
+        combodescription: combodescription,
+      });
+
+    res.redirect("/preferences"); // Redirect after successful update
+  } catch (error) {
+    console.error("Error updating combo:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Delete Combo
+app.post("/deletecombo/:comboid", async (req, res) => {
+    const { comboid } = req.params;
+  
+    try {
+      const deletedRows = await knex('combos')
+        .where('comboid', comboid)
+        .del();
+  
+      if (deletedRows === 0) {
+        return res.status(404).json({ message: "Combo not found" });
+      }
+  
+      res.status(200).json({ message: "Combo deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting combo:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
 app.get("/addtopping", (req,res) =>{
 
     const { 

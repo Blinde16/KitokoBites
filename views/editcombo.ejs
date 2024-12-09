@@ -3,17 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= combo.comboname - Kitoko Bites</title>
+  <title><%= combo.comboname %> - Kitoko Bites</title>
   <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
 <!-- Add/Edit Combo Form -->
 <div class="container">
-  <h2><%= combo.comboname%></h2>
+  <h2><%= combo.comboname %></h2>
   <form action="/editcombo/<%= combo.comboid %>" method="POST">
     <div class="mb-3">
-      <label for="combo-product-name" class="form-label">Product Name</label>
-      <input type="text" class="form-control" id="combo-product-name" name="productname" value="<%= combo.productname %>" required>
+      <label for="combo-product" class="form-label">Product Name</label>
+      <select class="form-control" id="combo-product" name="productid" required>
+        <% products.forEach(product => { %>
+          <option value="<%= product.productid %>" <%= product.productid === combo.productid ? "selected" : "" %>>
+            <%= product.productname %>
+          </option>
+        <% }); %>
+      </select>
     </div>
     <div class="mb-3">
       <label for="combo-name" class="form-label">Combo Name</label>
