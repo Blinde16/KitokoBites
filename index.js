@@ -2,6 +2,8 @@ let express = require("express");
 
 let app = express();
 
+let router = express.Router();
+
 let path = require("path");
 
 const port = 5500;
@@ -228,381 +230,340 @@ app.post("/addproduct", (req,res) =>{
       })
 })
 
-app.get("/editproduct/:productid", async (req,res) =>{
+app.get("/editproduct/:productid", async (req, res) => {
+    const productid = req.params.productid;
     try {
-    knex('products')
-    .select(
-        'productid', 
-        'productname', 
-        'productprice', 
-        'productcost', 
-    )
-    .then(products => {knex('producttype').select('producttypeid', 'producttypename')
-        .then(producttype => 
-            { res.render("editproduct", {products, producttype}
-                )
-            }
-            )
-        }
-    );
-   
-    const producttype = await knex('producttype')
-    .select(
-        'producttypeid', 
-        'producttypename'
-    );
-
-    res.render("editproduct", {
-        products: products,
-        producttype: producttype
-        })
-
+      const product = await knex('products')
+        .where('productid', productid)
+        .select('productid', 'productname', 'productprice', 'productcost', 'producttype')
+        .first(); // Fetches the first record as an object
+  
+      const producttypes = await knex('producttype').select('producttypeid', 'producttypename');
+  
+      res.render("editproduct", { product, producttypes });
     } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
+      console.error("Error fetching data from the database:", err);
+      res.status(500).send("Error fetching data from the database");
+    }
+  });
+  
+  app.post("/editproduct/:productid", async (req, res) => {
+    const productid = req.params.productid;
+    const { productname, producttype, productprice, productcost } = req.body;
+  
+    try {
+      await knex('products')
+        .where('productid', productid)
+        .update({
+          productname,
+          producttype, // Use correct field name
+          productprice,
+          productcost,
+        });
+  
+      res.redirect("/preferences"); // Redirect to preferences after successful update
+    } catch (error) {
+      console.error("Error updating product:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+  app.post("/deleteproduct/:productid", async (req, res) => {
+    const { productid } = req.params;
+  
+    try {
+      // Delete the product from the database
+      await knex('products')
+        .where('productid', productid)
+        .del();
+  
+        res.redirect("/preferences"); // Redirect to preferences after successful update
+    } catch (error) {
+      console.error("Error updating product:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.get("/addproducttype", async (req, res) => {
+    try {
+      res.render("addproducttype"); // Render the form directly
+    } catch (err) {
+      console.error("Error rendering addproducttype form:", err);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.get("/editproducttype/:producttypeid", async (req, res) => {
+    const { producttypeid } = req.params;
+    try {
+      const producttype = await knex('producttype')
+        .where('producttypeid', producttypeid)
+        .select('producttypeid', 'producttypename')
+        .first(); // Fetch a single record
+  
+      if (!producttype) {
+        return res.status(404).send("Product type not found");
+      }
+  
+      res.render("editproducttype", { producttype });
+    } catch (err) {
+      console.error("Error fetching product type:", err);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.post("/addproducttype", async (req, res) => {
+    const { producttypename } = req.body;
+  
+    try {
+      await knex("producttype").insert({
+        producttypename,
+      });
+  
+      res.redirect("/preferences"); // Redirect after successful insert
+    } catch (error) {
+      console.error("Error adding product type:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.post("/editproducttype/:producttypeid", async (req, res) => {
+    const { producttypeid } = req.params; // Get from params
+    const { producttypename } = req.body;
+  
+    try {
+      const updatedRows = await knex('producttype')
+        .where('producttypeid', producttypeid)
+        .update({
+          producttypename,
+        });
+  
+      if (updatedRows === 0) {
+        return res.status(404).send("Product type not found or not updated");
+      }
+  
+      res.redirect("/preferences"); // Redirect after successful update
+    } catch (error) {
+      console.error("Error updating product type:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+  app.post("/deleteproducttype/:producttypeid", async (req, res) => {
+    const { producttypeid } = req.params;
+  
+    try {
+      // Delete the product from the database
+      await knex('producttype')
+        .where('producttypeid', producttypeid)
+        .del();
+  
+      res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+
+// Render Add Combo Form
+app.get("/addcombo", async (req, res) => {
+    try {
+      // Fetch product list (or other required data for the form, if needed)
+      const products = await knex('products').select('productid', 'productname');
+      res.render("addcombo", { products }); // Render the form with products for selection
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      res.status(500).send("Error rendering add combo form");
+    }
+  });
+  
+  // Add Combo - Form Submission
+  app.post("/addcombo", async (req, res) => {
+    const { productid, comboname, combodescription } = req.body;
+  
+    try {
+      await knex("combos").insert({
+        productid: productid,
+        comboname: comboname,
+        combodescription: combodescription,
+      });
+      res.redirect("/preferences"); // Redirect after successful addition
+    } catch (error) {
+      console.error("Error adding combo:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+// Render Edit Combo Form
+app.get("/editcombo/:comboid", async (req, res) => {
+  const { comboid } = req.params;
+
+  try {
+    // Fetch the specific combo to edit
+    const combo = await knex('combos')
+      .where('comboid', comboid)
+      .first();
+
+    // Fetch the product list for dropdown selection
+    const products = await knex('products').select('productid', 'productname');
+
+    if (!combo) {
+      return res.status(404).send("Combo not found");
     }
 
-    let id = req.params.id
-    knex("volunteer").join("heardabout", "heardabout.heardaboutid", "=", "volunteer.heardaboutid")
-    .join("sewinglevel", "sewinglevel.sewinglevelid", '=', 'volunteer.sewinglevelid')
-    .join("sewingpreference", "sewingpreference.sewingpreferenceid", "=", "volunteer.sewingpreferenceid")
-    .join("address", "address.addressid", "=", "volunteer.addressid")
-    .select('volunteerid', 
-      'volunteer.heardaboutid', 
-      'address.city as volunteercity',
-      'address.state as volunteerstate',
-      'sewingpreference.description as sewingpreferencedescription',
-      'sewinglevel.description as sewingleveldescription',
-      'heardabout.description as heardaboutdescription', 
-      'volunteer.first_name', 
-      'volunteer.last_name', 
-      'volunteer.email',
-      'volunteer.phone_number',
-      'volunteer.hourspermonth',
-      'volunteer.sewinglevelid',
-      'volunteer.sewingpreferenceid',
-      'volunteer.addressid'
-    )
-    .where("volunteerid", id).first().then(volunteer => {
-      knex("heardabout").select("heardaboutid", "description").then(heardAboutOptions => {
-      knex("sewinglevel").select("sewinglevelid", "description").then(sewingLevelOptions => {
-        knex("sewingpreference").select("sewingpreferenceid", "description").then(sewingPreferenceOptions => {
-          res.render('editVolunteer', {volunteer, heardAboutOptions, sewingLevelOptions, sewingPreferenceOptions})
-        })
-      })
-      })
+    res.render("editcombo", { combo, products });
+  } catch (error) {
+    console.error("Error fetching combo:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Edit Combo - Form Submission
+app.post("/editcombo/:comboid", async (req, res) => {
+  const { comboid } = req.params;
+  const { productid, comboname, combodescription } = req.body;
+
+  try {
+    await knex('combos')
+      .where('comboid', comboid)
+      .update({
+        productid: productid,
+        comboname: comboname,
+        combodescription: combodescription,
+      });
+
+    res.redirect("/preferences"); // Redirect after successful update
+  } catch (error) {
+    console.error("Error updating combo:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Delete Combo
+app.post("/deletecombo/:comboid", async (req, res) => {
+    const { comboid } = req.params;
+  
+    try {
+      const deletedRows = await knex('combos')
+        .where('comboid', comboid)
+        .del();
+  
+      if (deletedRows === 0) {
+        return res.status(404).json({ message: "Combo not found" });
+      }
+  
+      res.status(200).json({ message: "Combo deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting combo:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+// GET route to render the form for adding a topping
+app.get("/addtopping", async (req, res) => {
+  try {
+    // Fetch all topping types from the correct 'toppingtypes' table
+    const toppingTypes = await knex('toppingtypes')  // Use 'toppingtypes' instead of 'toppingtype'
+      .select('toppingtypeid', 'toppingtypename');
+
+    // Get the next topping ID (one more than the max toppingid)
+    const maxToppingId = await knex('toppings')
+      .max('toppingid as maxToppingId')
+      .first();
+
+    const newToppingId = maxToppingId.maxToppingId + 1; // Next topping ID
+
+    res.render('addtoppings', {
+      toppingTypes: toppingTypes, // Pass the topping types to the view
+      newToppingId: newToppingId  // Pass the next topping ID
+    });
+  } catch (err) {
+    console.error('Error fetching data for form:', err);
+    res.status(500).send('Error fetching data for form');
+  }
+});
+
+
+// POST route to handle form submission and insert the new topping into the database
+app.post("/addtopping", (req, res) => {
+  const { 
+    toppingid,    // New topping ID
+    toppingname,  // Topping name from the form
+    toppingtypeid // Selected topping type ID
+  } = req.body;
+
+  console.log('Form submitted');
+
+  // Insert the new Topping into the database
+  knex("toppings")
+    .insert({
+      toppingid: toppingid,       // Use the calculated next topping ID
+      toppingname: toppingname,   // Insert topping name
+      toppingtypeid: toppingtypeid // Insert topping type ID
+    })
+    .then(() => {
+      res.redirect('/preferences'); // Redirect to the preferences page after adding
     })
     .catch(error => {
-      console.error('Error fetching Data:', error);
+      console.error('Error adding topping:', error);
       res.status(500).send('Internal Server Error');
     });
-})
+});
 
-app.post("/editproduct", (req,res) =>{
-    const {
-        productid,
-        productname,
-        producttypeid,
-        productprice,
-        productcost
-      } = req.body;
-      console.log('Form submitted');
-  // Update the Volunteer in the database
-  knex('product')
-    .where('productid', productid)
-    .update({
-        productname: productname,
-        producttypeid: producttypeid,
-        productprice: productprice,
-        productcost: productcost
-    })
-  .then(() => {
-    // Redirect after both updates succeed
-    res.redirect("/preferences");
-  })
-  .catch(error => {
-    console.error('Error updating volunteer or address:', error);
-    res.status(500).send('Internal Server Error');
-  });
-})
 
-app.get("/addproducttype",  async (req,res) =>{
-    try { 
-    const producttype = await knex('producttype')
-    .select(
-        'producttypeid', 
-        'producttypename'
-    );
 
-    res.render("addproducttype", {
-        producttype: producttype
-        })
 
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
-    }
-})
+app.get("/addtopping", async (req, res) => {
+  try {
+    // Fetch all topping types from the 'toppingtypes' table
+    const toppingTypes = await knex('toppingtypes')
+      .select('toppingtypeid', 'toppingname');
 
-app.get("/editproducttype/:producttypeid",  async (req,res) =>{
-    try { 
-    const producttype = await knex('producttype')
-    .select(
-        'producttypeid', 
-        'producttypename'
-    );
+    // Get the next topping ID (one more than the max toppingid)
+    const maxToppingId = await knex('toppings')
+      .max('toppingid as maxToppingId')
+      .first();
 
-    res.render("/editproducttype", {
-        producttype: producttype
-        })
+    const newToppingId = maxToppingId.maxToppingId + 1; // Next topping ID
 
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
-    }
-})
+    res.render('addtoppings', {
+      toppingTypes: toppingTypes, // Pass the topping types to the view
+      newToppingId: newToppingId  // Pass the next topping ID
+    });
+  } catch (err) {
+    console.error('Error fetching data for form:', err);
+    res.status(500).send('Error fetching data for form');
+  }
+});
 
-app.post("/addproducttype", (req,res) =>{
+app.post("/addtopping", (req, res) => {
+  const { 
+    toppingtypename,
+    toppingtypeid 
+  } = req.body;
 
-    const { 
-        producttypename, 
-      } = req.body;
-      console.log('Form submitted');
+  console.log('Form submitted');
 
-    // Insert the new Character into the database
-    knex("producttypename")
+  // Insert the new Topping into the database
+  knex("toppings")
     .insert({
-      producttypename: producttypename
+      toppingname: toppingtypename,  // Updated variable name here
+      toppingtypeid: toppingtypeid
     })
     .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.post("/editproducttype/:producttypeid", (req,res) =>{
-    const { 
-        producttypeid,
-        producttypename
-      } = req.body;
-      console.log('Form submitted');
-  
-  // Update the Volunteer in the database
-  knex('producttype')
-    .where('producttypeid', producttypeid)
-    .update({
-      producttypename: producttypename
+      res.redirect('/preferences'); // Redirect to the preferences page after adding
     })
-  .then(() => {
-    // Redirect after both updates succeed
-    res.redirect("/preferences");
-  })
-  .catch(error => {
-    console.error('Error updating volunteer or address:', error);
-    res.status(500).send('Internal Server Error');
-  });
-})
+    .catch(error => {
+      console.error('Error adding topping:', error);
+      res.status(500).send('Internal Server Error');
+    });
+});
 
-app.get("/addcombo", (req,res) =>{
-
-    const { 
-        productid,
-        comboname,
-        combodescription 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("combos")
-    .insert({
-        productid: productid,
-        comboname: comboname,
-        combodescription: combodescription
-    })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.get("/editcombo/:comboid",  async (req,res) =>{
-    try { 
-    const combo = await 
-    knex('combos')
-    .select(
-        'comboid', 
-        'productid',
-        'comboname',
-        'combodescription'
-    );
-
-    res.render("/editproducttype", {
-        combo: combo
-        })
-
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
-    }
-})
-
-app.post("/addcombo", (req,res) =>{
-
-    const { 
-        productid,
-        comboname,
-        combodescription 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("combos")
-    .insert({
-        productid: productid,
-        comboname: comboname,
-        combodescription: combodescription
-    })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.post("/editcombo/:comboid", (req,res) =>{
-    const { 
-        comboid,
-        productid,
-        comboname,
-        combodescription
-      } = req.body;
-      console.log('Form submitted');
-  
-  // Update the Volunteer in the database
-  knex('combos')
-    .where('comboid', comboid)
-    .update({
-        productid: productid,
-        comboname: comboname,
-        combodescription: combodescription
-    })
-  .then(() => {
-    // Redirect after both updates succeed
-    res.redirect("/preferences");
-  })
-  .catch(error => {
-    console.error('Error updating volunteer or address:', error);
-    res.status(500).send('Internal Server Error');
-  });
-})
-
-app.get("/addtopping", (req,res) =>{
-
-    const { 
-        toppingid,
-        toppingname,
-        productid,
-        toppingtypeid 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("toppings")
-    .insert({
-        toppingid: toppingid,
-        toppingname: toppingname,
-        productid: productid,
-        toppingtypeid: toppingtypeid
-    })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.get("/edittopping/:toppingid",  async (req,res) =>{
-    try { 
-    const topping = await 
-    knex('toppings')
-    .select(
-        'toppingid', 
-        'toppingname',
-        'productid',
-        'toppingtypeid'
-    );
-
-    res.render("/edittopping", {
-        topping: topping
-        })
-
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
-    }
-})
-
-app.post("/addtopping", (req,res) =>{
-
-    const { 
-        toppingname,
-        productid,
-        toppingtypeid 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("toppings")
-    .insert({
-        toppingname: toppingname,
-        productid: productid,
-        toppingtypeid: toppingtypeid 
-    })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.post("/edittopping", (req,res) =>{
-    const { 
-        toppingid,
-        toppingname,
-        productid,
-        toppingtypeid
-      } = req.body;
-      console.log('Form submitted');
-  
-  // Update the Volunteer in the database
-  knex('toppings')
-    .where('toppingid', toppingid)
-    .update({
-        toppingname: toppingname,
-        productid: productid,
-        toppingtypeid: toppingtypeid
-    })
-  .then(() => {
-    // Redirect after both updates succeed
-    res.redirect("/preferences");
-  })
-  .catch(error => {
-    console.error('Error updating volunteer or address:', error);
-    res.status(500).send('Internal Server Error');
-  });
-})
 
 // Route to render the add/edit topping type form
 app.get('/addtoppingtype/:id?', async (req, res) => {
@@ -657,6 +618,41 @@ app.post('/toppingtypes/:id?', async (req, res) => {
   }
 });
 
+// Route to render the edit form
+app.get('/edittoppingtype/:id', async (req, res) => {
+  const toppingtypeid = req.params.id;
+  try {
+    const toppingtype = await knex('toppingtypes').where({ toppingtypeid }).first();
+    if (toppingtype) {
+      res.render('edittoppingtypes', { toppingtype }); // Render the form with current topping type data
+    } else {
+      res.status(404).send('Topping type not found');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
+});
+
+// POST route to handle the update
+app.post('/edittoppingtype/:id', async (req, res) => {
+  const toppingtypeid = req.params.id;
+  const { toppingtypename } = req.body;  // Get the updated name from the form
+  try {
+    const updatedRows = await knex('toppingtypes')
+      .where({ toppingtypeid })
+      .update({ toppingtypename });
+
+    if (updatedRows > 0) {
+      res.redirect('/preferences'); // Redirect to a preferences or list page after update
+    } else {
+      res.status(404).send('Topping type not found');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
+});
 
 
 
