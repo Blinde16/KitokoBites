@@ -84,6 +84,7 @@ app.get('/menu', async (req, res) => {
 app.get('/catering', async (req, res) => {
     try {
       // Fetch products from the database
+      const message = " "
       const products = await 
         knex('products')
         .join('producttype', 'producttype', '=', 'producttypeid')
@@ -99,12 +100,18 @@ app.get('/catering', async (req, res) => {
       res.render('catering', {
         products: products,
         toppings: toppings,
+        message
       });
     } catch (err) {
       console.error('Error fetching data from the database:', err);
       res.status(500).send('Error fetching data from the database');
     }
 });
+
+app.post("/catering/book", (req,res) => {
+  message = "order submitted successfully!"
+  res.render("catering", {message})
+})
 
 app.get('/ordernow', async (req, res) => {
     try {
@@ -223,282 +230,240 @@ app.post("/addproduct", (req,res) =>{
       })
 })
 
-app.get("/editproduct/:productid", async (req,res) =>{
+app.get("/editproduct/:productid", async (req, res) => {
+    const productid = req.params.productid;
     try {
-    knex('products')
-    .select(
-        'productid', 
-        'productname', 
-        'productprice', 
-        'productcost', 
-    )
-    .then(products => {knex('producttype').select('producttypeid', 'producttypename')
-        .then(producttype => 
-            { res.render("editproduct", {products, producttype}
-                )
-            }
-            )
-        }
-    );
-   
-    const producttype = await knex('producttype')
-    .select(
-        'producttypeid', 
-        'producttypename'
-    );
-
-    res.render("editproduct", {
-        products: products,
-        producttype: producttype
-        })
-
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
-    }
-
-    let id = req.params.id
-    knex("volunteer").join("heardabout", "heardabout.heardaboutid", "=", "volunteer.heardaboutid")
-    .join("sewinglevel", "sewinglevel.sewinglevelid", '=', 'volunteer.sewinglevelid')
-    .join("sewingpreference", "sewingpreference.sewingpreferenceid", "=", "volunteer.sewingpreferenceid")
-    .join("address", "address.addressid", "=", "volunteer.addressid")
-    .select('volunteerid', 
-      'volunteer.heardaboutid', 
-      'address.city as volunteercity',
-      'address.state as volunteerstate',
-      'sewingpreference.description as sewingpreferencedescription',
-      'sewinglevel.description as sewingleveldescription',
-      'heardabout.description as heardaboutdescription', 
-      'volunteer.first_name', 
-      'volunteer.last_name', 
-      'volunteer.email',
-      'volunteer.phone_number',
-      'volunteer.hourspermonth',
-      'volunteer.sewinglevelid',
-      'volunteer.sewingpreferenceid',
-      'volunteer.addressid'
-    )
-    .where("volunteerid", id).first().then(volunteer => {
-      knex("heardabout").select("heardaboutid", "description").then(heardAboutOptions => {
-      knex("sewinglevel").select("sewinglevelid", "description").then(sewingLevelOptions => {
-        knex("sewingpreference").select("sewingpreferenceid", "description").then(sewingPreferenceOptions => {
-          res.render('editVolunteer', {volunteer, heardAboutOptions, sewingLevelOptions, sewingPreferenceOptions})
-        })
-      })
-      })
-    })
-    .catch(error => {
-      console.error('Error fetching Data:', error);
-      res.status(500).send('Internal Server Error');
-    });
-})
-
-app.post("/editproduct", (req,res) =>{
-    const {
-        productid,
-        productname,
-        producttypeid,
-        productprice,
-        productcost
-      } = req.body;
-      console.log('Form submitted');
-  // Update the Volunteer in the database
-  knex('product')
-    .where('productid', productid)
-    .update({
-        productname: productname,
-        producttypeid: producttypeid,
-        productprice: productprice,
-        productcost: productcost
-    })
-  .then(() => {
-    // Redirect after both updates succeed
-    res.redirect("/preferences");
-  })
-  .catch(error => {
-    console.error('Error updating volunteer or address:', error);
-    res.status(500).send('Internal Server Error');
-  });
-})
-
-app.get("/addproducttype",  async (req,res) =>{
-    try { 
-    const producttype = await knex('producttype')
-    .select(
-        'producttypeid', 
-        'producttypename'
-    );
-
-    res.render("addproducttype", {
-        producttype: producttype
-        })
-
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
-    }
-})
-
-app.get("/editproducttype/:producttypeid",  async (req,res) =>{
-    try { 
-    const producttype = await knex('producttype')
-    .select(
-        'producttypeid', 
-        'producttypename'
-    );
-
-    res.render("/editproducttype", {
-        producttype: producttype
-        })
-
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
-    }
-})
-
-app.post("/addproducttype", (req,res) =>{
-
-    const { 
-        producttypename, 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("producttypename")
-    .insert({
-      producttypename: producttypename
-    })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.post("/editproducttype/:producttypeid", (req,res) =>{
-    const { 
-        producttypeid,
-        producttypename
-      } = req.body;
-      console.log('Form submitted');
+      const product = await knex('products')
+        .where('productid', productid)
+        .select('productid', 'productname', 'productprice', 'productcost', 'producttype')
+        .first(); // Fetches the first record as an object
   
-  // Update the Volunteer in the database
-  knex('producttype')
-    .where('producttypeid', producttypeid)
-    .update({
-      producttypename: producttypename
-    })
-  .then(() => {
-    // Redirect after both updates succeed
-    res.redirect("/preferences");
-  })
-  .catch(error => {
-    console.error('Error updating volunteer or address:', error);
-    res.status(500).send('Internal Server Error');
-  });
-})
-
-app.get("/addcombo", (req,res) =>{
-
-    const { 
-        productid,
-        comboname,
-        combodescription 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("combos")
-    .insert({
-        productid: productid,
-        comboname: comboname,
-        combodescription: combodescription
-    })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.get("/editcombo/:comboid",  async (req,res) =>{
-    try { 
-    const combo = await 
-    knex('combos')
-    .select(
-        'comboid', 
-        'productid',
-        'comboname',
-        'combodescription'
-    );
-
-    res.render("/editproducttype", {
-        combo: combo
-        })
-
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
-    }
-})
-
-app.post("/addcombo", (req,res) =>{
-
-    const { 
-        productid,
-        comboname,
-        combodescription 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("combos")
-    .insert({
-        productid: productid,
-        comboname: comboname,
-        combodescription: combodescription
-    })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.post("/editcombo/:comboid", (req,res) =>{
-    const { 
-        comboid,
-        productid,
-        comboname,
-        combodescription
-      } = req.body;
-      console.log('Form submitted');
+      const producttypes = await knex('producttype').select('producttypeid', 'producttypename');
   
-  // Update the Volunteer in the database
-  knex('combos')
-    .where('comboid', comboid)
-    .update({
+      res.render("editproduct", { product, producttypes });
+    } catch (err) {
+      console.error("Error fetching data from the database:", err);
+      res.status(500).send("Error fetching data from the database");
+    }
+  });
+  
+  app.post("/editproduct/:productid", async (req, res) => {
+    const productid = req.params.productid;
+    const { productname, producttype, productprice, productcost } = req.body;
+  
+    try {
+      await knex('products')
+        .where('productid', productid)
+        .update({
+          productname,
+          producttype, // Use correct field name
+          productprice,
+          productcost,
+        });
+  
+      res.redirect("/preferences"); // Redirect to preferences after successful update
+    } catch (error) {
+      console.error("Error updating product:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+  app.post("/deleteproduct/:productid", async (req, res) => {
+    const { productid } = req.params;
+  
+    try {
+      // Delete the product from the database
+      await knex('products')
+        .where('productid', productid)
+        .del();
+  
+        res.redirect("/preferences"); // Redirect to preferences after successful update
+    } catch (error) {
+      console.error("Error updating product:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.get("/addproducttype", async (req, res) => {
+    try {
+      res.render("addproducttype"); // Render the form directly
+    } catch (err) {
+      console.error("Error rendering addproducttype form:", err);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.get("/editproducttype/:producttypeid", async (req, res) => {
+    const { producttypeid } = req.params;
+    try {
+      const producttype = await knex('producttype')
+        .where('producttypeid', producttypeid)
+        .select('producttypeid', 'producttypename')
+        .first(); // Fetch a single record
+  
+      if (!producttype) {
+        return res.status(404).send("Product type not found");
+      }
+  
+      res.render("editproducttype", { producttype });
+    } catch (err) {
+      console.error("Error fetching product type:", err);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.post("/addproducttype", async (req, res) => {
+    const { producttypename } = req.body;
+  
+    try {
+      await knex("producttype").insert({
+        producttypename,
+      });
+  
+      res.redirect("/preferences"); // Redirect after successful insert
+    } catch (error) {
+      console.error("Error adding product type:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.post("/editproducttype/:producttypeid", async (req, res) => {
+    const { producttypeid } = req.params; // Get from params
+    const { producttypename } = req.body;
+  
+    try {
+      const updatedRows = await knex('producttype')
+        .where('producttypeid', producttypeid)
+        .update({
+          producttypename,
+        });
+  
+      if (updatedRows === 0) {
+        return res.status(404).send("Product type not found or not updated");
+      }
+  
+      res.redirect("/preferences"); // Redirect after successful update
+    } catch (error) {
+      console.error("Error updating product type:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+  app.post("/deleteproducttype/:producttypeid", async (req, res) => {
+    const { producttypeid } = req.params;
+  
+    try {
+      // Delete the product from the database
+      await knex('producttype')
+        .where('producttypeid', producttypeid)
+        .del();
+  
+      res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+
+// Render Add Combo Form
+app.get("/addcombo", async (req, res) => {
+    try {
+      // Fetch product list (or other required data for the form, if needed)
+      const products = await knex('products').select('productid', 'productname');
+      res.render("addcombo", { products }); // Render the form with products for selection
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      res.status(500).send("Error rendering add combo form");
+    }
+  });
+  
+  // Add Combo - Form Submission
+  app.post("/addcombo", async (req, res) => {
+    const { productid, comboname, combodescription } = req.body;
+  
+    try {
+      await knex("combos").insert({
         productid: productid,
         comboname: comboname,
-        combodescription: combodescription
-    })
-  .then(() => {
-    // Redirect after both updates succeed
-    res.redirect("/preferences");
-  })
-  .catch(error => {
-    console.error('Error updating volunteer or address:', error);
-    res.status(500).send('Internal Server Error');
+        combodescription: combodescription,
+      });
+      res.redirect("/preferences"); // Redirect after successful addition
+    } catch (error) {
+      console.error("Error adding combo:", error);
+      res.status(500).send("Internal Server Error");
+    }
   });
-})
 
+// Render Edit Combo Form
+app.get("/editcombo/:comboid", async (req, res) => {
+  const { comboid } = req.params;
+
+  try {
+    // Fetch the specific combo to edit
+    const combo = await knex('combos')
+      .where('comboid', comboid)
+      .first();
+
+    // Fetch the product list for dropdown selection
+    const products = await knex('products').select('productid', 'productname');
+
+    if (!combo) {
+      return res.status(404).send("Combo not found");
+    }
+
+    res.render("editcombo", { combo, products });
+  } catch (error) {
+    console.error("Error fetching combo:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Edit Combo - Form Submission
+app.post("/editcombo/:comboid", async (req, res) => {
+  const { comboid } = req.params;
+  const { productid, comboname, combodescription } = req.body;
+
+  try {
+    await knex('combos')
+      .where('comboid', comboid)
+      .update({
+        productid: productid,
+        comboname: comboname,
+        combodescription: combodescription,
+      });
+
+    res.redirect("/preferences"); // Redirect after successful update
+  } catch (error) {
+    console.error("Error updating combo:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Delete Combo
+app.post("/deletecombo/:comboid", async (req, res) => {
+    const { comboid } = req.params;
+  
+    try {
+      const deletedRows = await knex('combos')
+        .where('comboid', comboid)
+        .del();
+  
+      if (deletedRows === 0) {
+        return res.status(404).json({ message: "Combo not found" });
+      }
+  
+      res.status(200).json({ message: "Combo deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting combo:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
 // GET route to render the form for adding a topping
 app.get("/addtopping", async (req, res) => {
   try {
@@ -737,80 +702,5 @@ app.post('/ordernowsubmit', async (req, res) => {
       res.status(500).send("Something went wrong");
   }
 });
-
-
-router.post('/ordernowsubmit', async (req, res) => {
-  const { name, email, phone, orderDetails } = req.body;
-
-  // Split name into first and last name
-  const [firstName, ...lastNameParts] = name.split(' ');
-  const lastName = lastNameParts.join(' ');
-
-  const parsedOrderDetails = JSON.parse(orderDetails); // Parse order details JSON
-  const { cart, toppings } = parsedOrderDetails;
-
-  try {
-    // Start a transaction
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-
-      // Step 1: Insert customer if not exists
-      const customerQuery = `
-        INSERT INTO Customers (CustFirstName, CustLastName, CustEmail, CustUsername, CustPassword)
-        VALUES ($1, $2, $3, $4, $5)
-        ON CONFLICT (CustEmail) DO UPDATE SET CustFirstName = $1, CustLastName = $2
-        RETURNING CustID;
-      `;
-      const customerValues = [firstName, lastName, email, phone, 'default_password'];
-      const customerResult = await client.query(customerQuery, customerValues);
-      const customerID = customerResult.rows[0].custid;
-
-      // Step 2: Insert order
-      const orderQuery = `
-        INSERT INTO Orders (CustomerID, OrderDate, TotalPrice)
-        VALUES ($1, CURRENT_DATE, $2)
-        RETURNING OrderID;
-      `;
-      const totalPrice = cart.reduce((sum, item) => sum + item.price, 0) + toppings.length * 0.5;
-      const orderResult = await client.query(orderQuery, [customerID, totalPrice]);
-      const orderID = orderResult.rows[0].orderid;
-
-      // Step 3: Insert products into Order_Products
-      const productQuery = `
-        INSERT INTO Order_Products (OrderID, ProductID, Quantity)
-        VALUES ($1, $2, $3);
-      `;
-      for (const product of cart) {
-        await client.query(productQuery, [orderID, product.id, 1]);
-      }
-
-      // Step 4: Insert toppings into a hypothetical Order_Toppings table
-      const toppingQuery = `
-        INSERT INTO Order_Products (OrderID, ProductID, Quantity)
-        VALUES ($1, $2, $3);
-      `;
-      for (const topping of toppings) {
-        await client.query(toppingQuery, [orderID, 1 /* Placeholder ProductID for topping */, 1]);
-      }
-
-      // Commit the transaction
-      await client.query('COMMIT');
-
-      res.status(200).send({ message: 'Order placed successfully!', orderID });
-    } catch (error) {
-      await client.query('ROLLBACK');
-      console.error('Transaction error:', error);
-      res.status(500).send({ error: 'Failed to place the order. Please try again.' });
-    } finally {
-      client.release();
-    }
-  } catch (error) {
-    console.error('Database connection error:', error);
-    res.status(500).send({ error: 'Database connection failed. Please try again.' });
-  }
-});
-
-module.exports = router;
 
 app.listen(port, console.log('Server listening'))
