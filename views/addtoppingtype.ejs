@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topping Type - Kitoko Bites</title>
+  <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+<!-- Add/Edit Topping Type Form -->
+<div class="container">
+  <h2><%= toppingtype.toppingtypename %></h2>
+  <form action="<%= toppingtype.toppingtypeid %>" method="POST">
+    <div class="mb-3">
+      <label for="type-name" class="form-label">Type Name</label>
+      <input type="text" class="form-control" id="type-name" name="toppingtypename" value="<%= toppingtype.toppingtypename %>" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+</body>
+</html>

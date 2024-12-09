@@ -286,7 +286,7 @@ app.get("/editproducttype/:producttypeid",  async (req,res) =>{
         'producttypename'
     );
 
-    res.render("addproducttype", {
+    res.render("/editproducttype", {
         producttype: producttype
         })
 
@@ -297,7 +297,25 @@ app.get("/editproducttype/:producttypeid",  async (req,res) =>{
 })
 
 app.post("/addproducttype", (req,res) =>{
-    res.render("addproducttype")
+
+    const { 
+        producttypename, 
+      } = req.body;
+      console.log('Form submitted');
+
+    // Insert the new Character into the database
+    knex("products")
+    .insert({
+      producttypename: producttypename,
+
+    })
+    .then(() => {
+        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
+      })
+      .catch(error => {
+        console.error('Error adding product:', error);
+        res.status(500).send('Internal Server Error');
+      })
 })
 
 app.post("/editproducttype", (req,res) =>{
@@ -305,7 +323,28 @@ app.post("/editproducttype", (req,res) =>{
 })
 
 app.get("/addcombo", (req,res) =>{
-    res.render("addcombo")
+
+    const { 
+        productid,
+        comboname,
+        combodescription 
+      } = req.body;
+      console.log('Form submitted');
+
+    // Insert the new Character into the database
+    knex("products")
+    .insert({
+        productid: productid,
+        comboname: comboname,
+        combodescription: combodescription
+    })
+    .then(() => {
+        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
+      })
+      .catch(error => {
+        console.error('Error adding product:', error);
+        res.status(500).send('Internal Server Error');
+      })
 })
 
 app.get("/editcombo", (req,res) =>{
