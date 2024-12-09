@@ -42,6 +42,11 @@ VALUES
     ('Nutty Nutty', 3, 7.49, 3.50),
     ('Yellow Snow', 1, 5.99, 2.50),
     ('Yin Yang', 2, 6.99, 3.00);
+INSERT INTO ToppingTypes (ToppingTypeName)
+VALUES
+    ('Drizzle'),
+    ('Sprinkle');
+-- Customers
 -- Sprinkle toppings
 INSERT INTO Toppings (ToppingName, ProductID, ToppingTypeID)
 VALUES
@@ -65,11 +70,6 @@ VALUES
     ('Almond Butter', NULL, 1),
     ('Apple Butter', NULL, 1);
 
-INSERT INTO ToppingTypes (ToppingTypeName)
-VALUES
-    ('Drizzle'),
-    ('Sprinkle');
--- Customers
 INSERT INTO Customers (CustFirstName, CustLastName, CustEmail, CustUsername, CustPassword)
 VALUES
     ('John', 'Doe', 'johndoe@example.com', 'johndoe', 'password123'),
