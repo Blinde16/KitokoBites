@@ -561,4 +561,60 @@ app.post("/edittopping", (req,res) =>{
     res.status(500).send('Internal Server Error');
   });
 })
+
+// Route to render the add/edit topping type form
+app.get('/addtoppingtype/:id?', async (req, res) => {
+  const toppingtypeid = req.params.id;
+  try {
+    if (toppingtypeid) {
+      // Edit existing topping type, fetch it from the database
+      const toppingtype = await knex('toppingtypes').where({ toppingtypeid }).first();
+      if (toppingtype) {
+        res.render('addtoppingtype', { toppingtype }); // Pass toppingtype data to the EJS template
+      } else {
+        res.status(404).send('Topping type not found');
+      }
+    } else {
+      // New topping type, render empty form
+      res.render('addtoppingtype', { toppingtype: { toppingtypename: '', toppingtypeid: '' } });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
+});
+
+app.post('/toppingtypes/:id?', async (req, res) => {
+  try {
+    const { toppingtypename } = req.body;  // Get topping name from the form input
+    const toppingtypeid = req.params.id;   // Get topping type ID from URL parameters
+
+    if (toppingtypeid) {
+      // If `toppingtypeid` exists, we are updating an existing topping type
+      const updatedRows = await knex('toppingtypes')
+        .where({ toppingtypeid })
+        .update({ toppingtypename });
+
+      if (updatedRows > 0) {
+        // Redirect to a list of topping types or another appropriate page after update
+        res.redirect('/preferences');
+      } else {
+        // If no rows were updated, send a 404 error
+        res.status(404).send('Topping type not found');
+      }
+    } else {
+      // If no `toppingtypeid`, we are adding a new topping type
+      await knex('toppingtypes').insert({ toppingtypename });
+      // After adding, redirect to a list page or another appropriate page
+      res.redirect('/preferences');
+    }
+  } catch (error) {
+    // Log the error to the console for better debugging
+    console.error('Error occurred in POST /toppingtypes:', error);
+    res.status(500).send('Something went wrong');
+  }
+});
+
+
+
 app.listen(port, console.log('Server listening'))
