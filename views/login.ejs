@@ -27,6 +27,13 @@
             <div class="input-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
+                <% if (security == false) { %>
+                    <div class="error-message">
+                <p> <%= message %> </p>
+                <% }  else { %>
+                    <div class="error-message">
+                <p> <%= message %> </p>
+                <% } %>
             </div>
 
             <div class="input-group">
@@ -42,9 +49,11 @@
             <form action="/" method="get">
                 <button type="submit" class="login-btn">Back to Homepage</button>
             </form>
+            <% if (security == true) { %>
             <form action="/preferences" method="get">
                 <button type="submit" class="login-btn">Admin preferences</button>
             </form>
+            <% } %>
             </form>
         </div>
     </div>

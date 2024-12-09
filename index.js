@@ -41,14 +41,6 @@ app.get("/", (req,res) => {
 app.get("/aboutus", (req,res) => {
     res.render("aboutus")
 })
-app.post("/login", (req,res) => {
-    const { username, password } = req.body;
-    
-})
-
-app.get("/login", (req,res) => {
-    res.render("login")
-})
 
 app.get("/signup", (req,res) =>{
     res.render("signup")
@@ -335,4 +327,38 @@ app.post("/addtopping", (req,res) =>{
 app.post("/edittopping", (req,res) =>{
     res.render("edittopping")
 })
+
+app.get('/login', (req,res) => {
+  let security = false;
+  let message = " "
+  res.render("login", {security, message})
+})
+
+// Admin login post route
+app.post('/login', (req, res) => {
+const username = req.body.username;
+const password = req.body.password;
+  // Query the user table to find the record
+  const user = knex('admin_login')
+    .select('*')
+    .where({ adminusername:username, adminpasswrd:password }) // Replace with hashed password comparison in production
+    .first() // Returns the first matching record
+    .then(user => {
+      if (user) {
+        security = true;
+        message = "Welcome"
+        res.render('login', {security, message})
+    } else {
+        security = false;
+        message = "You entered the wrong username or password"
+        res.render("login", {security, message})
+    }
+    // res.render('index', {security})
+    })
+    .catch(error => {
+      console.error('Error adding Character:', error);
+      res.status(500).send('Internal Server Error');
+    })
+});
+
 app.listen(port, console.log('Server listening'))
