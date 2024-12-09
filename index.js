@@ -550,52 +550,54 @@ app.post("/addtopping", (req, res) => {
     });
 });
 
+// GET route to render the edit topping page
+app.get('/edittopping/:id', (req, res) => {
+  const toppingId = req.params.id;
 
+  // Query the database to fetch the topping by its id
+  knex('toppings')
+    .where('toppingid', toppingId)
+    .first()
+    .then((topping) => {
+      if (!topping) {
+        return res.status(404).send('Topping not found');
+      }
 
-
-app.get("/addtopping", async (req, res) => {
-  try {
-    // Fetch all topping types from the 'toppingtypes' table
-    const toppingTypes = await knex('toppingtypes')
-      .select('toppingtypeid', 'toppingname');
-
-    // Get the next topping ID (one more than the max toppingid)
-    const maxToppingId = await knex('toppings')
-      .max('toppingid as maxToppingId')
-      .first();
-
-    const newToppingId = maxToppingId.maxToppingId + 1; // Next topping ID
-
-    res.render('addtoppings', {
-      toppingTypes: toppingTypes, // Pass the topping types to the view
-      newToppingId: newToppingId  // Pass the next topping ID
+      // Fetch all topping types
+      knex('toppingtypes')
+        .then((toppingTypes) => {
+          res.render('edittopping', { topping, toppingTypes });
+        })
+        .catch((error) => {
+          console.error('Error fetching topping types', error);
+          res.status(500).send('Error fetching topping types');
+        });
+    })
+    .catch((error) => {
+      console.error('Error fetching topping data', error);
+      res.status(500).send('Error fetching data');
     });
-  } catch (err) {
-    console.error('Error fetching data for form:', err);
-    res.status(500).send('Error fetching data for form');
-  }
 });
 
-app.post("/addtopping", (req, res) => {
-  const { 
-    toppingtypename,
-    toppingtypeid 
-  } = req.body;
+// POST route to update the topping
+app.post('/edittopping/:id', (req, res) => {
+  const toppingId = req.params.id;
+  const { toppingname, toppingtypeid } = req.body;
 
-  console.log('Form submitted');
-
-  // Insert the new Topping into the database
-  knex("toppings")
-    .insert({
-      toppingname: toppingtypename,  // Updated variable name here
-      toppingtypeid: toppingtypeid
+  // Update the topping in the database
+  knex('toppings')
+    .where('toppingid', toppingId)
+    .update({
+      toppingname,
+      toppingtypeid
     })
     .then(() => {
-      res.redirect('/preferences'); // Redirect to the preferences page after adding
+      // Redirect to the topping list or another page
+      res.redirect('/preferences'); // Or change this to another appropriate page
     })
-    .catch(error => {
-      console.error('Error adding topping:', error);
-      res.status(500).send('Internal Server Error');
+    .catch((error) => {
+      console.error('Error updating topping', error);
+      res.status(500).send('Error updating topping');
     });
 });
 
