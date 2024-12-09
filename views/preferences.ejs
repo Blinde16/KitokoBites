@@ -13,6 +13,9 @@
     .action-buttons button {
       margin-right: 5px;
     }
+    .search-bar {
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 <body>
@@ -22,6 +25,7 @@
     <!-- Products Table -->
     <div class="table-container">
       <h2>Products</h2>
+      <input type="text" id="product-search" class="form-control search-bar" placeholder="Search by product name">
       <table class="table table-striped">
         <thead>
           <tr>
@@ -42,19 +46,26 @@
             <td><%= product.productprice %></td>
             <td><%= product.productcost %></td>
             <td class="action-buttons">
-              <button class="btn btn-warning btn-sm edit-btn">Edit</button>
-              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                <form action="/editproduct/<%= product.productid %>" method="GET" style="display:inline;">
+                    <button type="submit" class="btn btn-warning btn-sm edit-btn">Edit</button>
+                </form>
+                <form action="/deleteproduct/<%= product.productid %>" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm delete-btn" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
+                </form>
             </td>
           </tr>
           <% }); %>
         </tbody>
       </table>
-      <button class="btn btn-success" id="add-product-btn">Add Product</button>
+      <form action="/addproduct" method="GET" style="display:inline;">
+        <button type="submit" class="btn btn-success" id="add-product-btn">Add Product</button>
+        </form>
     </div>
 
     <!-- Product Types Table -->
     <div class="table-container">
       <h2>Product Types</h2>
+      <input type="text" id="product-type-search" class="form-control search-bar" placeholder="Search by type name">
       <table class="table table-striped">
         <thead>
           <tr>
@@ -69,19 +80,26 @@
             <td><%= type.producttypeid %></td>
             <td><%= type.producttypename %></td>
             <td class="action-buttons">
-              <button class="btn btn-warning btn-sm edit-btn">Edit</button>
-              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                <form action="/editproducttype/<%= type.producttypeid %>" method="GET" style="display:inline;">
+                    <button type="submit" class="btn btn-warning btn-sm edit-btn">Edit</button>
+                </form>
+                <form action="/deleteproducttype/<%= type.producttypeid %>" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm delete-btn" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
+                </form>
             </td>
           </tr>
           <% }); %>
         </tbody>
       </table>
-      <button class="btn btn-success" id="add-product-type-btn">Add Product Type</button>
-    </div>
+      <form action="/addproducttype" method="GET" style="display:inline;">
+        <button type="submit" class="btn btn-success" id="add-product-type-btn">Add Product Type</button>
+    </form>
+      </div>
 
     <!-- Combos Table -->
     <div class="table-container">
       <h2>Combos</h2>
+      <input type="text" id="combo-search" class="form-control search-bar" placeholder="Search by combo name">
       <table class="table table-striped">
         <thead>
           <tr>
@@ -100,19 +118,26 @@
             <td><%= combo.comboname %></td>
             <td><%= combo.combodescription %></td>
             <td class="action-buttons">
-              <button class="btn btn-warning btn-sm edit-btn">Edit</button>
-              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                <form action="/editcombo/<%= combo.comboid %>" method="GET" style="display:inline;">
+                    <button type="submit" class="btn btn-warning btn-sm edit-btn">Edit</button>
+                </form>
+                <form action="/deletecombo/<%= combo.comboid %>" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm delete-btn" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
+                </form>
             </td>
           </tr>
           <% }); %>
         </tbody>
       </table>
-      <button class="btn btn-success" id="add-combo-btn">Add Combo</button>
+      <form action="/addcombo" method="GET" style="display:inline;">
+        <button type="submit" class="btn btn-success" id="add-combo-btn">Add Combo</button>
+      </form>
     </div>
 
     <!-- Toppings Table -->
     <div class="table-container">
       <h2>Toppings</h2>
+      <input type="text" id="topping-search" class="form-control search-bar" placeholder="Search by topping name">
       <table class="table table-striped">
         <thead>
           <tr>
@@ -131,19 +156,26 @@
             <td><%= topping.toppingtypename %></td>
             <td><%= topping.productid %></td>
             <td class="action-buttons">
-              <button class="btn btn-warning btn-sm edit-btn">Edit</button>
-              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                <form action="/edittopping/<%= topping.toppingid %>" method="GET" style="display:inline;">
+                    <button type="submit" class="btn btn-warning btn-sm edit-btn">Edit</button>
+                </form>
+                <form action="/deletetopping/<%= topping.toppingid %>" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm delete-btn" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
+                </form>
             </td>
           </tr>
           <% }); %>
         </tbody>
       </table>
-      <button class="btn btn-success" id="add-topping-btn">Add Topping</button>
+      <form action="/addtopping" method="GET" style="display:inline;">
+        <button type="submit" class="btn btn-success" id="add-topping-btn">Add Topping</button>
+      </form>
     </div>
 
     <!-- Topping Types Table -->
     <div class="table-container">
       <h2>Topping Types</h2>
+      <input type="text" id="topping-type-search" class="form-control search-bar" placeholder="Search by topping type name">
       <table class="table table-striped">
         <thead>
           <tr>
@@ -158,18 +190,48 @@
             <td><%= type.toppingtypeid %></td>
             <td><%= type.toppingtypename %></td>
             <td class="action-buttons">
-              <button class="btn btn-warning btn-sm edit-btn">Edit</button>
-              <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                <form action="/edittoppingtype/<%= type.toppingtypeid %>" method="GET" style="display:inline;">
+                    <button type="submit" class="btn btn-warning btn-sm edit-btn">Edit</button>
+                </form>
+                <form action="/deletetoppingtype/<%= type.toppingtypeid %>" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm delete-btn" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
+                </form>
             </td>
           </tr>
           <% }); %>
         </tbody>
       </table>
-      <button class="btn btn-success" id="add-topping-type-btn">Add Topping Type</button>
+      <form action="/addtoppingtype" method="GET" style="display:inline;">
+        <button type="submit" class="btn btn-success" id="add-topping-type-btn">Add Topping Type</button>
+      </form>
     </div>
   </div>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Function to filter table rows based on search input
+    function filterTable(searchId, tableBodyId, columnIndex) {
+      const searchInput = document.getElementById(searchId).value.toLowerCase();
+      const tableBody = document.getElementById(tableBodyId);
+      const rows = tableBody.getElementsByTagName('tr');
+
+      Array.from(rows).forEach(row => {
+        const cell = row.getElementsByTagName('td')[columnIndex];
+        if (cell) {
+          const cellText = cell.textContent.toLowerCase();
+          row.style.display = cellText.includes(searchInput) ? '' : 'none';
+        }
+      });
+    }
+
+    // Add event listeners to search bars
+    document.getElementById('product-search').addEventListener('input', () => filterTable('product-search', 'products-table-body', 1));
+    document.getElementById('product-type-search').addEventListener('input', () => filterTable('product-type-search', 'product-types-table-body', 1));
+    document.getElementById('combo-search').addEventListener('input', () => filterTable('combo-search', 'combos-table-body', 2));
+    document.getElementById('topping-search').addEventListener('input', () => filterTable('topping-search', 'toppings-table-body', 1));
+    document.getElementById('topping-type-search').addEventListener('input', () => filterTable('topping-type-search', 'topping-types-table-body', 1));
+  </script>
 </body>
 </html>

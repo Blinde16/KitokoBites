@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preferences - Kitoko Bites</title>
+  <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+<!--Edit Product Form -->
+<div class="container">
+    <h2><%= products.productname %></h2>
+    <form action="/editproducts/<%= products.productid%>" method="POST">
+        <input type="hidden" name="addressid" value="<%= products.productid %>">
+      <div class="mb-3">
+        <label for="product-name" class="form-label">Product Name</label>
+        <input type="text" class="form-control" id="product-name" name="productname" value="<%= products.productname %>" required>
+      </div>
+      <div class="mb-3">
+        <label for="product-type" class="form-label">Product Type</label>
+        <select class="form-control" id="product-type" name="producttype" required>
+            <option value="<%= producttype.producttypeid %>" selected><%= producttype.producttypename %></option>
+            <% producttype.forEach(producttype => { %>
+                <option value="<%= producttype.producttypeid %>"><%= producttype.producttypename %></option>
+            <% }); %>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="product-price" class="form-label">Price</label>
+        <input type="number" class="form-control" id="product-price" name="productprice" value="<%= products.price %>" required>
+      </div>
+      <div class="mb-3">
+        <label for="product-cost" class="form-label">Cost</label>
+        <input type="number" class="form-control" id="product-cost" name="productcost" value="<%= products.cost %>" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Edit Product</button>
+    </form>
+  </div>
+</body>
+</html>
+  

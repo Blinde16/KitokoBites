@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - Kitoko Bites</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/index.css">
+  <style>
+    .about-section {
+      margin-top: 40px;
+    }
+    .about-heading {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .about-content {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    .operational-hours {
+      text-align: center;
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+    }
+    .operational-hours h3 {
+      margin-bottom: 10px;
+    }
+    .operational-hours p {
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+     <!-- Navbar + Header -->
+     <%- include('header') %> <!-- This will include your header.ejs -->
+        
+  <div class="container">
+    <div class="about-section">
+      <h1 class="about-heading">About Kitoko Bites</h1>
+      <div class="about-content">
+        <p>At Kitoko Bites, we specialize in creating delicious, vegan and plant-based donuts that cater to all dietary needs. Our regular donuts are made with traditional flour, while our gluten-free options are carefully crafted with yuca or cassava, offering a light, fluffy experience without compromising on flavor.</p>
+
+        <p>We understand that many people face challenges when trying to enjoy traditional pastries due to allergies or dietary restrictions. That's why Kitoko Bites was born — to provide a safe and delicious alternative for those who feel like pastry outcasts. Whether you're allergic to gluten, soy, corn, sugar, eggs, milk, cheese, butter, wheat, preservatives, artificial dyes, or other common allergens, we’ve got you covered!</p>
+
+        <p>Our commitment to quality and inclusivity means that all of our donuts are strictly vegan and gluten-free, and we go the extra mile to ensure that our products are free from the ingredients that often make pastries inaccessible. Even our chocolate syrup is vegan and gluten-free, proving that indulgence doesn't have to come with compromises!</p>
+
+        <p>At Kitoko Bites, we also put careful thought into every ingredient we use. Our toppings are selected with a customer-centric approach to guarantee that each bite is not only tasty but also meets our high standards of quality. We proudly offer pastries that are not just vegan and gluten-free, but also plant-based first!</p>
+      </div>
+
+      <div class="operational-hours">
+        <h3>Our Operational Hours</h3>
+        <p>We are open during the following hours:</p>
+        <p><strong>Friday:</strong> 10:00 AM - 3:00 PM EST</p>
+        <p><strong>Saturday:</strong> 10:00 AM - 5:00 PM EST</p>
+      </div>
+    </div>
+  </div>
+<!-- Navbar + Header -->
+<%- include('footer') %> <!-- This will include your header.ejs -->
+       
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

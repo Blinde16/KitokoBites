@@ -18,6 +18,9 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(express.static('public'));
 
+//  Static middleware 
+app.use(express.static(path.join(__dirname, 'public')));
+
 //connects us to our server in postgres
 const knex = require("knex") ({
     client : "pg",
@@ -35,6 +38,9 @@ app.get("/", (req,res) => {
     res.render("index")
 })
 
+app.get("/aboutus", (req,res) => {
+    res.render("aboutus")
+})
 app.post("/login", (req,res) => {
     const { username, password } = req.body;
     
@@ -43,6 +49,7 @@ app.post("/login", (req,res) => {
 app.get("/login", (req,res) => {
     res.render("login")
 })
+
 app.get("/signup", (req,res) =>{
     res.render("signup")
 })
@@ -167,6 +174,165 @@ app.get('/preferences', async (req, res) => {
       res.status(500).send('Error fetching data from the database');
     }
   });
-  
 
+app.get("/addproduct",  async (req,res) =>{
+    try {
+    const products = await knex('products')
+    .select(
+        'productid', 
+        'productname', 
+        'productprice', 
+        'productcost', 
+    );
+   
+    const producttype = await knex('producttype')
+    .select(
+        'producttypeid', 
+        'producttypename'
+    );
+
+    res.render("addproduct", {
+        products: products,
+        producttype: producttype
+        })
+
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
+})
+
+app.post("/addproduct", (req,res) =>{
+
+    const { 
+        productname, 
+        producttype, 
+        price, 
+        cost
+      } = req.body;
+      console.log('Form submitted');
+
+    // Insert the new Character into the database
+    knex("products")
+    .insert({
+      productname: productname,
+      producttype: producttype,
+      price: price,
+      cost: cost
+    })
+    .then(() => {
+        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
+      })
+      .catch(error => {
+        console.error('Error adding product:', error);
+        res.status(500).send('Internal Server Error');
+      })
+})
+
+app.get("/editproduct/:productid", async (req,res) =>{
+    try {
+    const products = await knex('products')
+    .select(
+        'productid', 
+        'productname', 
+        'productprice', 
+        'productcost', 
+    );
+   
+    const producttype = await knex('producttype')
+    .select(
+        'producttypeid', 
+        'producttypename'
+    );
+
+    res.render("editproduct", {
+        products: products,
+        producttype: producttype
+        })
+
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
+})
+
+app.post("/editproduct", (req,res) =>{
+    res.render("editproduct")
+})
+
+app.get("/addproducttype",  async (req,res) =>{
+    try { 
+    const producttype = await knex('producttype')
+    .select(
+        'producttypeid', 
+        'producttypename'
+    );
+
+    res.render("addproducttype", {
+        producttype: producttype
+        })
+
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
+})
+
+app.get("/editproducttype/:producttypeid",  async (req,res) =>{
+    try { 
+    const producttype = await knex('producttype')
+    .select(
+        'producttypeid', 
+        'producttypename'
+    );
+
+    res.render("addproducttype", {
+        producttype: producttype
+        })
+
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
+})
+
+app.post("/addproducttype", (req,res) =>{
+    res.render("addproducttype")
+})
+
+app.post("/editproducttype", (req,res) =>{
+    res.render("editproducttype")
+})
+
+app.get("/addcombo", (req,res) =>{
+    res.render("addcombo")
+})
+
+app.get("/editcombo", (req,res) =>{
+    res.render("editcombo")
+})
+
+app.post("/addcombo", (req,res) =>{
+    res.render("addcombo")
+})
+
+app.post("/editcombo", (req,res) =>{
+    res.render("editcombo")
+})
+
+app.get("/addtopping", (req,res) =>{
+    res.render("addtopping")
+})
+
+app.get("/edittopping", (req,res) =>{
+    res.render("edittopping")
+})
+
+app.post("/addtopping", (req,res) =>{
+    res.render("addtopping")
+})
+
+app.post("/edittopping", (req,res) =>{
+    res.render("edittopping")
+})
 app.listen(port, console.log('Server listening'))
