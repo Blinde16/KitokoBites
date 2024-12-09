@@ -389,32 +389,176 @@ app.get("/addcombo", (req,res) =>{
       })
 })
 
-app.get("/editcombo", (req,res) =>{
-    
-    res.render("editcombo")
+app.get("/editcombo/:comboid",  async (req,res) =>{
+    try { 
+    const combo = await 
+    knex('combos')
+    .select(
+        'comboid', 
+        'productid',
+        'comboname',
+        'combodescription'
+    );
+
+    res.render("/editproducttype", {
+        combo: combo
+        })
+
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
 })
 
 app.post("/addcombo", (req,res) =>{
-    res.render("addcombo")
+
+    const { 
+        productid,
+        comboname,
+        combodescription 
+      } = req.body;
+      console.log('Form submitted');
+
+    // Insert the new Character into the database
+    knex("combos")
+    .insert({
+        productid: productid,
+        comboname: comboname,
+        combodescription: combodescription
+    })
+    .then(() => {
+        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
+      })
+      .catch(error => {
+        console.error('Error adding product:', error);
+        res.status(500).send('Internal Server Error');
+      })
 })
 
-app.post("/editcombo", (req,res) =>{
-    res.render("editcombo")
+app.post("/editcombo/:comboid", (req,res) =>{
+    const { 
+        comboid,
+        productid,
+        comboname,
+        combodescription
+      } = req.body;
+      console.log('Form submitted');
+  
+  // Update the Volunteer in the database
+  knex('combos')
+    .where('comboid', comboid)
+    .update({
+        productid: productid,
+        comboname: comboname,
+        combodescription: combodescription
+    })
+  .then(() => {
+    // Redirect after both updates succeed
+    res.redirect("/preferences");
+  })
+  .catch(error => {
+    console.error('Error updating volunteer or address:', error);
+    res.status(500).send('Internal Server Error');
+  });
 })
 
 app.get("/addtopping", (req,res) =>{
-    res.render("addtopping")
+
+    const { 
+        toppingid,
+        toppingname,
+        productid,
+        toppingtypeid 
+      } = req.body;
+      console.log('Form submitted');
+
+    // Insert the new Character into the database
+    knex("toppings")
+    .insert({
+        toppingid: toppingid,
+        toppingname: toppingname,
+        productid: productid,
+        toppingtypeid: toppingtypeid
+    })
+    .then(() => {
+        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
+      })
+      .catch(error => {
+        console.error('Error adding product:', error);
+        res.status(500).send('Internal Server Error');
+      })
 })
 
-app.get("/edittopping", (req,res) =>{
-    res.render("edittopping")
+app.get("/edittopping/:toppingid",  async (req,res) =>{
+    try { 
+    const topping = await 
+    knex('toppings')
+    .select(
+        'toppingid', 
+        'toppingname',
+        'productid',
+        'toppingtypeid'
+    );
+
+    res.render("/edittopping", {
+        topping: topping
+        })
+
+    } catch (err) {
+      console.error('Error fetching data from the database:', err);
+      res.status(500).send('Error fetching data from the database');
+    }
 })
 
 app.post("/addtopping", (req,res) =>{
-    res.render("addtopping")
+
+    const { 
+        toppingname,
+        productid,
+        toppingtypeid 
+      } = req.body;
+      console.log('Form submitted');
+
+    // Insert the new Character into the database
+    knex("toppings")
+    .insert({
+        toppingname: toppingname,
+        productid: productid,
+        toppingtypeid: toppingtypeid 
+    })
+    .then(() => {
+        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
+      })
+      .catch(error => {
+        console.error('Error adding product:', error);
+        res.status(500).send('Internal Server Error');
+      })
 })
 
 app.post("/edittopping", (req,res) =>{
-    res.render("edittopping")
+    const { 
+        toppingid,
+        toppingname,
+        productid,
+        toppingtypeid
+      } = req.body;
+      console.log('Form submitted');
+  
+  // Update the Volunteer in the database
+  knex('toppings')
+    .where('toppingid', toppingid)
+    .update({
+        toppingname: toppingname,
+        productid: productid,
+        toppingtypeid: toppingtypeid
+    })
+  .then(() => {
+    // Redirect after both updates succeed
+    res.redirect("/preferences");
+  })
+  .catch(error => {
+    console.error('Error updating volunteer or address:', error);
+    res.status(500).send('Internal Server Error');
+  });
 })
 app.listen(port, console.log('Server listening'))
