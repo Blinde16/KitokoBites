@@ -257,7 +257,31 @@ app.get("/editproduct/:productid", async (req,res) =>{
 })
 
 app.post("/editproduct", (req,res) =>{
-    res.render("editproduct")
+    const {
+        productid,
+        productname,
+        producttypeid,
+        productprice,
+        productcost
+      } = req.body;
+      console.log('Form submitted');
+  // Update the Volunteer in the database
+  knex('product')
+    .where('productid', productid)
+    .update({
+        productname: productname,
+        producttypeid: producttypeid,
+        productprice: productprice,
+        productcost: productcost
+    })
+  .then(() => {
+    // Redirect after both updates succeed
+    res.redirect("/preferences");
+  })
+  .catch(error => {
+    console.error('Error updating volunteer or address:', error);
+    res.status(500).send('Internal Server Error');
+  });
 })
 
 app.get("/addproducttype",  async (req,res) =>{
@@ -304,10 +328,9 @@ app.post("/addproducttype", (req,res) =>{
       console.log('Form submitted');
 
     // Insert the new Character into the database
-    knex("products")
+    knex("producttypename")
     .insert({
-      producttypename: producttypename,
-
+      producttypename: producttypename
     })
     .then(() => {
         res.redirect('/preferences'); // Redirect to the volunteer list page after adding
@@ -318,8 +341,27 @@ app.post("/addproducttype", (req,res) =>{
       })
 })
 
-app.post("/editproducttype", (req,res) =>{
-    res.render("editproducttype")
+app.post("/editproducttype/:producttypeid", (req,res) =>{
+    const { 
+        producttypeid,
+        producttypename
+      } = req.body;
+      console.log('Form submitted');
+  
+  // Update the Volunteer in the database
+  knex('producttype')
+    .where('producttypeid', producttypeid)
+    .update({
+      producttypename: producttypename
+    })
+  .then(() => {
+    // Redirect after both updates succeed
+    res.redirect("/preferences");
+  })
+  .catch(error => {
+    console.error('Error updating volunteer or address:', error);
+    res.status(500).send('Internal Server Error');
+  });
 })
 
 app.get("/addcombo", (req,res) =>{
@@ -332,7 +374,7 @@ app.get("/addcombo", (req,res) =>{
       console.log('Form submitted');
 
     // Insert the new Character into the database
-    knex("products")
+    knex("combos")
     .insert({
         productid: productid,
         comboname: comboname,
@@ -348,6 +390,7 @@ app.get("/addcombo", (req,res) =>{
 })
 
 app.get("/editcombo", (req,res) =>{
+    
     res.render("editcombo")
 })
 
