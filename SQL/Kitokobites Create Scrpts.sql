@@ -40,6 +40,12 @@ CREATE TABLE Combos (
     ComboDescription VARCHAR(255)
 );
 
+-- Create the ToppingTypes table
+CREATE TABLE ToppingTypes (
+    ToppingTypeID SERIAL PRIMARY KEY,
+    ToppingTypeName VARCHAR(50) NOT NULL
+);
+
 -- Toppings Table
 CREATE TABLE Toppings (
     ToppingID SERIAL PRIMARY KEY,
@@ -48,11 +54,6 @@ CREATE TABLE Toppings (
     ToppingTypeID INT REFERENCES ToppingTypes(ToppingTypeID)
 );
 
--- Create the ToppingTypes table
-CREATE TABLE ToppingTypes (
-    ToppingTypeID SERIAL PRIMARY KEY,
-    ToppingTypeName VARCHAR(50) NOT NULL
-);
 
 -- Combo_Toppings Table
 CREATE TABLE Combo_toppings (

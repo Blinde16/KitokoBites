@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topping - Kitoko Bites</title>
+  <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+<!-- Add/Edit Topping Form -->
+<div class="container">
+  <h2><%= topping.toppingname" %></h2>
+  <form action="<%= /edittopping/<%= topping.toppingid %>" method="POST">
+    <div class="mb-3">
+      <label for="topping-name" class="form-label">Topping Name</label>
+      <input type="text" class="form-control" id="topping-name" name="toppingname" value="<%= topping.toppingname %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="topping-price" class="form-label">Price</label>
+      <input type="number" step="0.01" class="form-control" id="topping-price" name="toppingprice" value="<%= topping.toppingprice %>" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+</body>
+</html>

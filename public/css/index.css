@@ -11,7 +11,7 @@ body {
     background-color: #f4f4f9;
     color: #333333;
     line-height: 1.6;
-    padding-top: 4rem; /* Space below fixed header */
+    padding-top: 90px; /* Adjust this to match your navbar's height */
 }
 
 /* Navigation Bar Styling */
@@ -50,6 +50,23 @@ nav {
     text-decoration: solid;
 }
 
+.products-column .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 60px; /* Optional spacing */
+  }
+  
+  .product-card {
+    height: 100%; /* Ensure cards stretch evenly */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .product-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+  
 /* Hero Section */
 .hero {
     position: relative; /* Positioning context for the video and text */
@@ -60,6 +77,13 @@ nav {
     text-align: center;
     color: rgb(13, 1, 1);
     padding: 0 2rem;
+}
+h1{
+    text-align: center;
+}
+
+p{
+    text-align: center;
 }
 
 .hero-video {
@@ -173,6 +197,13 @@ footer {
     text-align: center;
     padding: 1rem;
     margin-top: 2rem; /* Space above footer */
+}
+
+.footer {
+    display: flex;
+    flex-direction: column; /* Stacks buttons vertically */
+    align-items: center;    /* Centers the buttons horizontally */
+    gap: 1rem;              /* Adds spacing between buttons */
 }
 
 /* Responsive Styling */
