@@ -231,12 +231,20 @@ app.post("/addproduct", (req,res) =>{
 
 app.get("/editproduct/:productid", async (req,res) =>{
     try {
-    const products = await knex('products')
+    knex('products')
     .select(
         'productid', 
         'productname', 
         'productprice', 
         'productcost', 
+    )
+    .then(products => {knex('producttype').select('producttypeid', 'producttypename')
+        .then(producttype => 
+            { res.render("editproduct", {products, producttype}
+                )
+            }
+            )
+        }
     );
    
     const producttype = await knex('producttype')
@@ -254,6 +262,41 @@ app.get("/editproduct/:productid", async (req,res) =>{
       console.error('Error fetching data from the database:', err);
       res.status(500).send('Error fetching data from the database');
     }
+
+    let id = req.params.id
+    knex("volunteer").join("heardabout", "heardabout.heardaboutid", "=", "volunteer.heardaboutid")
+    .join("sewinglevel", "sewinglevel.sewinglevelid", '=', 'volunteer.sewinglevelid')
+    .join("sewingpreference", "sewingpreference.sewingpreferenceid", "=", "volunteer.sewingpreferenceid")
+    .join("address", "address.addressid", "=", "volunteer.addressid")
+    .select('volunteerid', 
+      'volunteer.heardaboutid', 
+      'address.city as volunteercity',
+      'address.state as volunteerstate',
+      'sewingpreference.description as sewingpreferencedescription',
+      'sewinglevel.description as sewingleveldescription',
+      'heardabout.description as heardaboutdescription', 
+      'volunteer.first_name', 
+      'volunteer.last_name', 
+      'volunteer.email',
+      'volunteer.phone_number',
+      'volunteer.hourspermonth',
+      'volunteer.sewinglevelid',
+      'volunteer.sewingpreferenceid',
+      'volunteer.addressid'
+    )
+    .where("volunteerid", id).first().then(volunteer => {
+      knex("heardabout").select("heardaboutid", "description").then(heardAboutOptions => {
+      knex("sewinglevel").select("sewinglevelid", "description").then(sewingLevelOptions => {
+        knex("sewingpreference").select("sewingpreferenceid", "description").then(sewingPreferenceOptions => {
+          res.render('editVolunteer', {volunteer, heardAboutOptions, sewingLevelOptions, sewingPreferenceOptions})
+        })
+      })
+      })
+    })
+    .catch(error => {
+      console.error('Error fetching Data:', error);
+      res.status(500).send('Internal Server Error');
+    });
 })
 
 app.post("/editproduct", (req,res) =>{
