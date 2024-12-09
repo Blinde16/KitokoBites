@@ -47,6 +47,23 @@ nav {
     text-decoration: underline;
 }
 
+.products-column .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 60px; /* Optional spacing */
+  }
+  
+  .product-card {
+    height: 100%; /* Ensure cards stretch evenly */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .product-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+  
 /* Hero Section */
 .hero {
     background-image: url('bakery-hero.jpg');
