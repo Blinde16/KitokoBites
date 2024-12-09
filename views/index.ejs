@@ -11,8 +11,12 @@
     <%- include('header') %> <!-- This will include your header.ejs -->
         
     
-    <!-- Hero Section with Bakery Image -->
+    <!-- Hero Section with Video Background -->
     <section class="hero">
+        <video autoplay loop muted class="hero-video">
+            <source src="your-video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
         <div class="hero-text">
             <h1>Welcome to Our Bakery</h1>
             <p>The best freshly made vegan donuts, every day. Savor the best of the vegan world and electrify your palette!</p>
@@ -24,9 +28,9 @@
     <br>
     <div class="split-banner">
     <div class="text-content">
-        <h1 style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; color:#f1f1f1">How you can help</h1>
-        <b><p>"Every life has value, every person can serve", and you can take the next step to donate, make vests, and organize an event too!</p></b>
-        <p>Link arms, lend a hand, and catch the vision of service for a debilitating need that is growing in the community. Be a part of a powerful campaign that changes lives of those in need.</p>
+        <h1 style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; color:#f1f1f1">We can come to you!</h1>
+        <p style="color: #f1f1f1;">Imagine your guests indulging in our freshly made, mouthwatering donuts, customized to match the theme of your event. Whether you're hosting an intimate gathering or a grand celebration, our delectable vegan donuts are the perfect treat to elevate your event. Let us bring the joy and flavor — because every event deserves a deliciously "kitoko" touch. </p>
+        <p></p>
         <br>
         <div class="action button-container">
         <form action="/VolunteerForm" method="GET">

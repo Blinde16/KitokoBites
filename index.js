@@ -2,6 +2,8 @@ let express = require("express");
 
 let app = express();
 
+let router = express.Router();
+
 let path = require("path");
 
 const port = 5500;
@@ -40,14 +42,6 @@ app.get("/", (req,res) => {
 
 app.get("/aboutus", (req,res) => {
     res.render("aboutus")
-})
-app.post("/login", (req,res) => {
-    const { username, password } = req.body;
-    
-})
-
-app.get("/login", (req,res) => {
-    res.render("login")
 })
 
 app.get("/signup", (req,res) =>{
@@ -463,103 +457,316 @@ app.post("/deletecombo/:comboid", async (req, res) => {
     }
   });
   
-app.get("/addtopping", (req,res) =>{
+// GET route to render the form for adding a topping
+app.get("/addtopping", async (req, res) => {
+  try {
+    // Fetch all topping types from the correct 'toppingtypes' table
+    const toppingTypes = await knex('toppingtypes')  // Use 'toppingtypes' instead of 'toppingtype'
+      .select('toppingtypeid', 'toppingtypename');
 
-    const { 
-        toppingid,
-        toppingname,
-        productid,
-        toppingtypeid 
-      } = req.body;
-      console.log('Form submitted');
+    // Get the next topping ID (one more than the max toppingid)
+    const maxToppingId = await knex('toppings')
+      .max('toppingid as maxToppingId')
+      .first();
 
-    // Insert the new Character into the database
-    knex("toppings")
+    const newToppingId = maxToppingId.maxToppingId + 1; // Next topping ID
+
+    res.render('addtoppings', {
+      toppingTypes: toppingTypes, // Pass the topping types to the view
+      newToppingId: newToppingId  // Pass the next topping ID
+    });
+  } catch (err) {
+    console.error('Error fetching data for form:', err);
+    res.status(500).send('Error fetching data for form');
+  }
+});
+
+
+// POST route to handle form submission and insert the new topping into the database
+app.post("/addtopping", (req, res) => {
+  const { 
+    toppingid,    // New topping ID
+    toppingname,  // Topping name from the form
+    toppingtypeid // Selected topping type ID
+  } = req.body;
+
+  console.log('Form submitted');
+
+  // Insert the new Topping into the database
+  knex("toppings")
     .insert({
-        toppingid: toppingid,
-        toppingname: toppingname,
-        productid: productid,
-        toppingtypeid: toppingtypeid
+      toppingid: toppingid,       // Use the calculated next topping ID
+      toppingname: toppingname,   // Insert topping name
+      toppingtypeid: toppingtypeid // Insert topping type ID
     })
     .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
+      res.redirect('/preferences'); // Redirect to the preferences page after adding
+    })
+    .catch(error => {
+      console.error('Error adding topping:', error);
+      res.status(500).send('Internal Server Error');
+    });
+});
 
-app.get("/edittopping/:toppingid",  async (req,res) =>{
-    try { 
-    const topping = await 
-    knex('toppings')
-    .select(
-        'toppingid', 
-        'toppingname',
-        'productid',
-        'toppingtypeid'
-    );
 
-    res.render("/edittopping", {
-        topping: topping
-        })
 
-    } catch (err) {
-      console.error('Error fetching data from the database:', err);
-      res.status(500).send('Error fetching data from the database');
+
+app.get("/addtopping", async (req, res) => {
+  try {
+    // Fetch all topping types from the 'toppingtypes' table
+    const toppingTypes = await knex('toppingtypes')
+      .select('toppingtypeid', 'toppingname');
+
+    // Get the next topping ID (one more than the max toppingid)
+    const maxToppingId = await knex('toppings')
+      .max('toppingid as maxToppingId')
+      .first();
+
+    const newToppingId = maxToppingId.maxToppingId + 1; // Next topping ID
+
+    res.render('addtoppings', {
+      toppingTypes: toppingTypes, // Pass the topping types to the view
+      newToppingId: newToppingId  // Pass the next topping ID
+    });
+  } catch (err) {
+    console.error('Error fetching data for form:', err);
+    res.status(500).send('Error fetching data for form');
+  }
+});
+
+app.post("/addtopping", (req, res) => {
+  const { 
+    toppingtypename,
+    toppingtypeid 
+  } = req.body;
+
+  console.log('Form submitted');
+
+  // Insert the new Topping into the database
+  knex("toppings")
+    .insert({
+      toppingname: toppingtypename,  // Updated variable name here
+      toppingtypeid: toppingtypeid
+    })
+    .then(() => {
+      res.redirect('/preferences'); // Redirect to the preferences page after adding
+    })
+    .catch(error => {
+      console.error('Error adding topping:', error);
+      res.status(500).send('Internal Server Error');
+    });
+});
+
+
+// Route to render the add/edit topping type form
+app.get('/addtoppingtype/:id?', async (req, res) => {
+  const toppingtypeid = req.params.id;
+  try {
+    if (toppingtypeid) {
+      // Edit existing topping type, fetch it from the database
+      const toppingtype = await knex('toppingtypes').where({ toppingtypeid }).first();
+      if (toppingtype) {
+        res.render('addtoppingtype', { toppingtype }); // Pass toppingtype data to the EJS template
+      } else {
+        res.status(404).send('Topping type not found');
+      }
+    } else {
+      // New topping type, render empty form
+      res.render('addtoppingtype', { toppingtype: { toppingtypename: '', toppingtypeid: '' } });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
+});
+
+app.post('/toppingtypes/:id?', async (req, res) => {
+  try {
+    const { toppingtypename } = req.body;  // Get topping name from the form input
+    const toppingtypeid = req.params.id;   // Get topping type ID from URL parameters
+
+    if (toppingtypeid) {
+      // If `toppingtypeid` exists, we are updating an existing topping type
+      const updatedRows = await knex('toppingtypes')
+        .where({ toppingtypeid })
+        .update({ toppingtypename });
+
+      if (updatedRows > 0) {
+        // Redirect to a list of topping types or another appropriate page after update
+        res.redirect('/preferences');
+      } else {
+        // If no rows were updated, send a 404 error
+        res.status(404).send('Topping type not found');
+      }
+    } else {
+      // If no `toppingtypeid`, we are adding a new topping type
+      await knex('toppingtypes').insert({ toppingtypename });
+      // After adding, redirect to a list page or another appropriate page
+      res.redirect('/preferences');
+    }
+  } catch (error) {
+    // Log the error to the console for better debugging
+    console.error('Error occurred in POST /toppingtypes:', error);
+    res.status(500).send('Something went wrong');
+  }
+});
+
+// Route to render the edit form
+app.get('/edittoppingtype/:id', async (req, res) => {
+  const toppingtypeid = req.params.id;
+  try {
+    const toppingtype = await knex('toppingtypes').where({ toppingtypeid }).first();
+    if (toppingtype) {
+      res.render('edittoppingtypes', { toppingtype }); // Render the form with current topping type data
+    } else {
+      res.status(404).send('Topping type not found');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
+});
+
+// POST route to handle the update
+app.post('/edittoppingtype/:id', async (req, res) => {
+  const toppingtypeid = req.params.id;
+  const { toppingtypename } = req.body;  // Get the updated name from the form
+  try {
+    const updatedRows = await knex('toppingtypes')
+      .where({ toppingtypeid })
+      .update({ toppingtypename });
+
+    if (updatedRows > 0) {
+      res.redirect('/preferences'); // Redirect to a preferences or list page after update
+    } else {
+      res.status(404).send('Topping type not found');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
+});
+
+
+
+app.get('/login', (req,res) => {
+  let security = false;
+  let message = " "
+  res.render("login", {security, message})
 })
 
-app.post("/addtopping", (req,res) =>{
-
-    const { 
-        toppingname,
-        productid,
-        toppingtypeid 
-      } = req.body;
-      console.log('Form submitted');
-
-    // Insert the new Character into the database
-    knex("toppings")
-    .insert({
-        toppingname: toppingname,
-        productid: productid,
-        toppingtypeid: toppingtypeid 
+// Admin login post route
+app.post('/login', (req, res) => {
+const username = req.body.username;
+const password = req.body.password;
+  // Query the user table to find the record
+  const user = knex('admin_login')
+    .select('*')
+    .where({ adminusername:username, adminpasswrd:password }) // Replace with hashed password comparison in production
+    .first() // Returns the first matching record
+    .then(user => {
+      if (user) {
+        security = true;
+        message = "Welcome"
+        res.render('login', {security, message})
+    } else {
+        security = false;
+        message = "You entered the wrong username or password"
+        res.render("login", {security, message})
+    }
+    // res.render('index', {security})
     })
-    .then(() => {
-        res.redirect('/preferences'); // Redirect to the volunteer list page after adding
-      })
-      .catch(error => {
-        console.error('Error adding product:', error);
-        res.status(500).send('Internal Server Error');
-      })
-})
-
-app.post("/edittopping", (req,res) =>{
-    const { 
-        toppingid,
-        toppingname,
-        productid,
-        toppingtypeid
-      } = req.body;
-      console.log('Form submitted');
-  
-  // Update the Volunteer in the database
-  knex('toppings')
-    .where('toppingid', toppingid)
-    .update({
-        toppingname: toppingname,
-        productid: productid,
-        toppingtypeid: toppingtypeid
+    .catch(error => {
+      console.error('Error adding Character:', error);
+      res.status(500).send('Internal Server Error');
     })
-  .then(() => {
-    // Redirect after both updates succeed
-    res.redirect("/preferences");
-  })
-  .catch(error => {
-    console.error('Error updating volunteer or address:', error);
-    res.status(500).send('Internal Server Error');
-  });
-})
+});
+
+
+app.post('/ordernowsubmit', async (req, res) => {
+  try {
+      // Your code for handling the order goes here
+      console.log(req.body); // Debug: Check if the data is coming through
+      res.send("Order submitted successfully!");
+  } catch (err) {
+      console.error(err);
+      res.status(500).send("Something went wrong");
+  }
+});
+
+
+router.post('/ordernowsubmit', async (req, res) => {
+  const { name, email, phone, orderDetails } = req.body;
+
+  // Split name into first and last name
+  const [firstName, ...lastNameParts] = name.split(' ');
+  const lastName = lastNameParts.join(' ');
+
+  const parsedOrderDetails = JSON.parse(orderDetails); // Parse order details JSON
+  const { cart, toppings } = parsedOrderDetails;
+
+  try {
+    // Start a transaction
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // Step 1: Insert customer if not exists
+      const customerQuery = `
+        INSERT INTO Customers (CustFirstName, CustLastName, CustEmail, CustUsername, CustPassword)
+        VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT (CustEmail) DO UPDATE SET CustFirstName = $1, CustLastName = $2
+        RETURNING CustID;
+      `;
+      const customerValues = [firstName, lastName, email, phone, 'default_password'];
+      const customerResult = await client.query(customerQuery, customerValues);
+      const customerID = customerResult.rows[0].custid;
+
+      // Step 2: Insert order
+      const orderQuery = `
+        INSERT INTO Orders (CustomerID, OrderDate, TotalPrice)
+        VALUES ($1, CURRENT_DATE, $2)
+        RETURNING OrderID;
+      `;
+      const totalPrice = cart.reduce((sum, item) => sum + item.price, 0) + toppings.length * 0.5;
+      const orderResult = await client.query(orderQuery, [customerID, totalPrice]);
+      const orderID = orderResult.rows[0].orderid;
+
+      // Step 3: Insert products into Order_Products
+      const productQuery = `
+        INSERT INTO Order_Products (OrderID, ProductID, Quantity)
+        VALUES ($1, $2, $3);
+      `;
+      for (const product of cart) {
+        await client.query(productQuery, [orderID, product.id, 1]);
+      }
+
+      // Step 4: Insert toppings into a hypothetical Order_Toppings table
+      const toppingQuery = `
+        INSERT INTO Order_Products (OrderID, ProductID, Quantity)
+        VALUES ($1, $2, $3);
+      `;
+      for (const topping of toppings) {
+        await client.query(toppingQuery, [orderID, 1 /* Placeholder ProductID for topping */, 1]);
+      }
+
+      // Commit the transaction
+      await client.query('COMMIT');
+
+      res.status(200).send({ message: 'Order placed successfully!', orderID });
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error('Transaction error:', error);
+      res.status(500).send({ error: 'Failed to place the order. Please try again.' });
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).send({ error: 'Database connection failed. Please try again.' });
+  }
+});
+
+module.exports = router;
+
 app.listen(port, console.log('Server listening'))

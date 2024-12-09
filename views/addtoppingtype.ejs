@@ -9,8 +9,8 @@
 <body>
 <!-- Add/Edit Topping Type Form -->
 <div class="container">
-  <h2><%= toppingtype.toppingtypename %></h2>
-  <form action="<%= toppingtype.toppingtypeid %>" method="POST">
+  <h2><%= toppingtype.toppingtypename || 'Add Topping Type' %></h2>
+  <form action="/toppingtypes/<%= toppingtype.toppingtypeid || '' %>" method="POST">
     <div class="mb-3">
       <label for="type-name" class="form-label">Type Name</label>
       <input type="text" class="form-control" id="type-name" name="toppingtypename" value="<%= toppingtype.toppingtypename %>" required>
