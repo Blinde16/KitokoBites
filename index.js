@@ -686,4 +686,91 @@ const password = req.body.password;
     })
 });
 
+
+app.post('/ordernowsubmit', async (req, res) => {
+  try {
+      // Your code for handling the order goes here
+      console.log(req.body); // Debug: Check if the data is coming through
+      res.send("Order submitted successfully!");
+  } catch (err) {
+      console.error(err);
+      res.status(500).send("Something went wrong");
+  }
+});
+
+
+router.post('/ordernowsubmit', async (req, res) => {
+  const { name, email, phone, orderDetails } = req.body;
+
+  // Split name into first and last name
+  const [firstName, ...lastNameParts] = name.split(' ');
+  const lastName = lastNameParts.join(' ');
+
+  const parsedOrderDetails = JSON.parse(orderDetails); // Parse order details JSON
+  const { cart, toppings } = parsedOrderDetails;
+
+  try {
+    // Start a transaction
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // Step 1: Insert customer if not exists
+      const customerQuery = `
+        INSERT INTO Customers (CustFirstName, CustLastName, CustEmail, CustUsername, CustPassword)
+        VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT (CustEmail) DO UPDATE SET CustFirstName = $1, CustLastName = $2
+        RETURNING CustID;
+      `;
+      const customerValues = [firstName, lastName, email, phone, 'default_password'];
+      const customerResult = await client.query(customerQuery, customerValues);
+      const customerID = customerResult.rows[0].custid;
+
+      // Step 2: Insert order
+      const orderQuery = `
+        INSERT INTO Orders (CustomerID, OrderDate, TotalPrice)
+        VALUES ($1, CURRENT_DATE, $2)
+        RETURNING OrderID;
+      `;
+      const totalPrice = cart.reduce((sum, item) => sum + item.price, 0) + toppings.length * 0.5;
+      const orderResult = await client.query(orderQuery, [customerID, totalPrice]);
+      const orderID = orderResult.rows[0].orderid;
+
+      // Step 3: Insert products into Order_Products
+      const productQuery = `
+        INSERT INTO Order_Products (OrderID, ProductID, Quantity)
+        VALUES ($1, $2, $3);
+      `;
+      for (const product of cart) {
+        await client.query(productQuery, [orderID, product.id, 1]);
+      }
+
+      // Step 4: Insert toppings into a hypothetical Order_Toppings table
+      const toppingQuery = `
+        INSERT INTO Order_Products (OrderID, ProductID, Quantity)
+        VALUES ($1, $2, $3);
+      `;
+      for (const topping of toppings) {
+        await client.query(toppingQuery, [orderID, 1 /* Placeholder ProductID for topping */, 1]);
+      }
+
+      // Commit the transaction
+      await client.query('COMMIT');
+
+      res.status(200).send({ message: 'Order placed successfully!', orderID });
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error('Transaction error:', error);
+      res.status(500).send({ error: 'Failed to place the order. Please try again.' });
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).send({ error: 'Database connection failed. Please try again.' });
+  }
+});
+
+module.exports = router;
+
 app.listen(port, console.log('Server listening'))
