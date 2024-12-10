@@ -159,7 +159,7 @@
                 <form action="/edittopping/<%= topping.toppingid %>" method="GET" style="display:inline;">
                     <button type="submit" class="btn btn-warning btn-sm edit-btn">Edit</button>
                 </form>
-                <form action="/deletetoppingtype/<%= topping.toppingtypename %>" method="POST" style="display:inline;">
+                <form action="/deletetopping/<%= topping.toppingid %>" method="POST" style="display:inline;">
                   <button type="submit" class="btn btn-danger btn-sm delete-btn" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
               </form>
             </td>

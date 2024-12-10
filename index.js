@@ -672,6 +672,8 @@ app.post("/deletetopping/:id", (req, res) => {
       res.status(500).send('Internal Server Error');
     });
   });
+
+  
 app.post("/deletetoppingtype/:toppingtypeid", async (req, res) => {
   const { toppingtypeid } = req.params;
   console.log("Topping Type ID to delete:", toppingtypeid);  // Log the toppingtypeid received in the URL
