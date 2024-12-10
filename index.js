@@ -656,6 +656,22 @@ app.post('/edittoppingtype/:id', async (req, res) => {
   }
 });
 
+app.post("/deletetopping/:id", (req, res) => {
+  let toppingid  = req.params.id;
+
+  
+    // Delete the product from the database
+      knex('toppings')
+      .where('toppingid', toppingid)
+      .del()
+      .then(() => {
+        res.redirect("/preferences")
+      })
+    .catch(error => {
+      console.error('Error deleting volunteer:', error);
+      res.status(500).send('Internal Server Error');
+    });
+  });
 
 
 app.get('/login', (req,res) => {
