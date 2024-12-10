@@ -111,7 +111,7 @@ app.get('/catering', async (req, res) => {
 app.post("/catering/book", (req,res) => {
   message = "order submitted successfully!"
   res.render("catering", {message})
-})
+});
 
 app.get('/ordernow', async (req, res) => {
     try {
@@ -656,6 +656,62 @@ app.post('/edittoppingtype/:id', async (req, res) => {
   }
 });
 
+app.post("/deletetopping/:id", (req, res) => {
+  let toppingid  = req.params.id;
+
+  
+    // Delete the product from the database
+      knex('toppings')
+      .where('toppingid', toppingid)
+      .del()
+      .then(() => {
+        res.redirect("/preferences")
+      })
+    .catch(error => {
+      console.error('Error deleting volunteer:', error);
+      res.status(500).send('Internal Server Error');
+    });
+  });
+
+
+app.post("/deletetoppingtype/:toppingtypeid", async (req, res) => {
+  const { toppingtypeid } = req.params;
+  console.log("Topping Type ID to delete:", toppingtypeid);  // Log the toppingtypeid received in the URL
+
+  try {
+    // Find the toppingtype based on the toppingtypeid
+    const toppingType = await knex('toppingtypes')
+      .where('toppingtypeid', toppingtypeid)
+      .first();
+
+    if (!toppingType) {
+      console.log("Topping type not found for ID:", toppingtypeid);  // Log if the topping type is not found
+      return res.status(404).send("Topping type not found");
+    }
+
+    console.log("Topping type found:", toppingType);  // Log the found topping type
+
+    // Delete all toppings that reference this toppingtypeid
+    await knex('toppings')
+      .where('toppingtypeid', toppingtypeid)
+      .del();
+
+      // Delete all combo toppings that reference this toppingtypeid
+      await knex('combo_toppings')
+      .where('toppingid', toppingtypeid)
+      .del();
+
+    // Now delete the toppingtype record
+    await knex('toppingtypes')
+      .where('toppingtypeid', toppingtypeid)
+      .del();
+
+    res.redirect("/preferences"); // Redirect after successful delete
+  } catch (error) {
+    console.error("Error deleting topping type:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 
 app.get('/login', (req,res) => {
