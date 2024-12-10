@@ -12,6 +12,16 @@
   <h2><%= combo.comboname %></h2>
   <form action="/editcombo/<%= combo.comboid %>" method="POST">
     <div class="mb-3">
+      <label for="combo-product-name" class="form-label">Product Name</label>
+      <input type="text" class="form-control" id="combo-product-name" name="productname" value="<%= combo.productname %>" required>
+      <select class="form-control" id="product-type" name="producttype" required>
+            <% combo-product-name.forEach(type => { %>
+              <option value="<%= type.producttypeid %>" <%= type.producttypeid === products.producttype ? "selected" : "" %>>
+                <%= type.combo-product-name %>
+              </option>
+            <% }); %>
+          </select>
+      </div>
       <label for="combo-product" class="form-label">Product Name</label>
       <select class="form-control" id="combo-product" name="productid" required>
         <% products.forEach(product => { %>
@@ -24,7 +34,15 @@
     <div class="mb-3">
       <label for="combo-name" class="form-label">Combo Name</label>
       <input type="text" class="form-control" id="combo-name" name="comboname" value="<%= combo.comboname %>" required>
-    </div>
+      <select class="form-control" id="product-type" name="producttype" required>
+            <% combo-name.forEach(type => { %>
+              <option value="<%= type.producttypeid %>" <%= type.producttypeid === products.producttype ? "selected" : "" %>>
+                <%= type.combo-name %>
+              </option>
+            <% }); %>
+          </select>
+    
+      </div>
     <div class="mb-3">
       <label for="combo-description" class="form-label">Combo Description</label>
       <textarea class="form-control" id="combo-description" name="combodescription" rows="3" required><%= combo.combodescription %></textarea>

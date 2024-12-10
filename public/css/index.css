@@ -310,3 +310,46 @@ footer {
     font-size: 14px;
     text-align: left;
 }
+
+/* Basic styles for the logo and header */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    transition: transform 0.3s ease; /* Smooth transition for scaling */
+}
+
+.logo-img {
+    height: 60px; /* Default logo size */
+    transition: height 0.3s ease; /* Smooth transition for height */
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Styles when logo is scaled down */
+.header-small .logo-img {
+    height: 40px; /* Smaller logo size */
+}
+
