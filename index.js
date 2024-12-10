@@ -111,7 +111,7 @@ app.get('/catering', async (req, res) => {
 app.post("/catering/book", (req,res) => {
   message = "order submitted successfully!"
   res.render("catering", {message})
-})
+});
 
 app.get('/ordernow', async (req, res) => {
     try {
@@ -673,7 +673,7 @@ app.post("/deletetopping/:id", (req, res) => {
     });
   });
 
-  
+
 app.post("/deletetoppingtype/:toppingtypeid", async (req, res) => {
   const { toppingtypeid } = req.params;
   console.log("Topping Type ID to delete:", toppingtypeid);  // Log the toppingtypeid received in the URL
@@ -694,6 +694,11 @@ app.post("/deletetoppingtype/:toppingtypeid", async (req, res) => {
     // Delete all toppings that reference this toppingtypeid
     await knex('toppings')
       .where('toppingtypeid', toppingtypeid)
+      .del();
+
+      // Delete all combo toppings that reference this toppingtypeid
+      await knex('combo_toppings')
+      .where('toppingid', toppingtypeid)
       .del();
 
     // Now delete the toppingtype record
