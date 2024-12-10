@@ -302,3 +302,11 @@ footer {
     transform: scale(1.1); /* Enlarge the image on hover */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add a light border shadow around the image */
 }
+
+/* for login page */
+.error-message {
+    margin-top: 5px;
+    color: red;
+    font-size: 14px;
+    text-align: left;
+}
