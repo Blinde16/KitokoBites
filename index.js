@@ -6,7 +6,7 @@ let router = express.Router();
 
 let path = require("path");
 
-const port = 5500;
+const port = process.env.PORT || 5500;
 // This is an edit by BLAKE, JASON, PORTER, and HUDDY
 
 // means we are working with ejs files so we dont make html files but we write in html with embedded javascript or ejs files
